@@ -12,6 +12,8 @@ namespace ApartmentsApp.Services.HomeServices
     {
         //tüm evleri listele
         BaseModel<HomeListModel> GetAll();
+
+        BaseModel<HomeSelectListModel> GetBillableHomes();
         //idye göre (aktif pasif önemli değil) evi getir
         BaseModel<HomeDetailModel> GetHome(int id);
         //ev ekle
@@ -24,5 +26,7 @@ namespace ApartmentsApp.Services.HomeServices
         //BaseModel<HomeListModel> GetEmptyHomes();
         //sadece aktif evleri listele dataTableda bu method çalışacak
         //BaseModel<HomeListModel> GetActiveHomes();
+
+        //kullanıcıya ev ata gibi bir method yaz. modelden gelen userId ve homeIdlere göre homes tablosundaki ownerIdyi doldur.
     }
 }

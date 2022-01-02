@@ -10,7 +10,6 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
     public partial class ApartmentsAppContext : DbContext
     {
         //Scaffold-DbContext "Server=TALHAEKREM;Database=ApartmentsDB;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entities -ContextDir Entities/ApartmentsAppDbContext -Context ApartmentsAppContext -Project ApartmentsApp.DB -StartupProject ApartmentsApp.DB -NoPluralize -Force
-
         public ApartmentsAppContext()
         {
         }
@@ -66,15 +65,15 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 
                 entity.Property(e => e.BillsId).HasColumnName("billsId");
 
-                entity.Property(e => e.ElectricPrice)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("electricPrice");
-
                 entity.Property(e => e.IsPaid).HasColumnName("isPaid");
 
                 entity.Property(e => e.PaymentDate)
                     .HasColumnType("datetime")
                     .HasColumnName("paymentDate");
+
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("price");
 
                 entity.HasOne(d => d.Bills)
                     .WithMany(p => p.ElectricBill)
@@ -94,15 +93,15 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 
                 entity.Property(e => e.BillsId).HasColumnName("billsId");
 
-                entity.Property(e => e.GasPrice)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("gasPrice");
-
                 entity.Property(e => e.IsPaid).HasColumnName("isPaid");
 
                 entity.Property(e => e.PaymentDate)
                     .HasColumnType("datetime")
                     .HasColumnName("paymentDate");
+
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("price");
 
                 entity.HasOne(d => d.Bills)
                     .WithMany(p => p.GasBill)
@@ -122,15 +121,15 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 
                 entity.Property(e => e.BillsId).HasColumnName("billsId");
 
-                entity.Property(e => e.HomePrice)
-                    .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("homePrice");
-
                 entity.Property(e => e.IsPaid).HasColumnName("isPaid");
 
                 entity.Property(e => e.PaymentDate)
                     .HasColumnType("datetime")
                     .HasColumnName("paymentDate");
+
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("price");
 
                 entity.HasOne(d => d.Bills)
                     .WithMany(p => p.HomeBill)
@@ -267,6 +266,12 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .IsUnicode(false)
                     .HasColumnName("name");
 
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("password");
+
                 entity.Property(e => e.PhoneNumber)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -303,9 +308,9 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .HasColumnType("datetime")
                     .HasColumnName("paymentDate");
 
-                entity.Property(e => e.WaterPrice)
+                entity.Property(e => e.Price)
                     .HasColumnType("decimal(18, 2)")
-                    .HasColumnName("waterPrice");
+                    .HasColumnName("price");
 
                 entity.HasOne(d => d.Bills)
                     .WithMany(p => p.WaterBill)

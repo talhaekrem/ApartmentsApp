@@ -10,7 +10,7 @@ namespace ApartmentsApp.DB.Entities
         public int Id { get; set; }
         public int BillsId { get; set; }
         public bool IsPaid { get; set; }
-        public decimal GasPrice { get; set; }
+        public decimal Price { get; set; }
         public DateTime BillDate { get; set; }
         public DateTime? PaymentDate { get; set; }
 

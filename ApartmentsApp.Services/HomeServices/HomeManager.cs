@@ -30,7 +30,7 @@ namespace ApartmentsApp.Services.HomeServices
                 result.isSuccess = true;
                 result.entity = _mapper.Map<HomeDetailModel>(model);
             }
-            if(!result.isSuccess)
+            if (!result.isSuccess)
             {
                 result.exeptionMessage = "Ev eklenirken hata oluştu.";
             }
@@ -87,7 +87,7 @@ namespace ApartmentsApp.Services.HomeServices
             {
                 var homes = _context.Homes;
 
-                if(homes.Any())
+                if (homes.Any())
                 {
                     result.entityList = _mapper.Map<List<HomeListModel>>(homes);
                     result.isSuccess = true;
@@ -125,7 +125,7 @@ namespace ApartmentsApp.Services.HomeServices
             var result = new BaseModel<HomeDetailModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                var homes = _context.Homes.SingleOrDefault(h => h.Id == id);
+                var homes = _context.Homes.FirstOrDefault(h => h.Id == id);
 
                 if (homes is not null)
                 {
@@ -146,13 +146,44 @@ namespace ApartmentsApp.Services.HomeServices
             using (var _context = new ApartmentsAppContext())
             {
                 var homes = _context.Homes.FirstOrDefault(h => h.Id == id);
-                homes.IsActive = false;
-                _context.SaveChanges();
-                result.isSuccess = true;
+                if (homes.OwnerId == null)
+                {
+                    homes.IsActive = false;
+                    _context.SaveChanges();
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Evin sahipleri vardır. Evi silemezsiniz. Sahibi kaldırmak için evi güncelleyin.";
+                }
+
             }
-            if (!result.isSuccess)
+            return result;
+        }
+
+        public BaseModel<HomeSelectListModel> GetBillableHomes()
+        {
+            var result = new BaseModel<HomeSelectListModel> { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
             {
-                result.exeptionMessage = "Evi devre dışı bırakırken bir sorun oluştu";
+                var query = from home in _context.Homes
+                            where home.IsActive && home.IsOwned
+                            join user in _context.Users
+                            on home.OwnerId equals user.Id
+                            select new
+                            {
+                                Id = home.Id,
+                                OwnerName = user.DisplayName
+                            };
+                if (query.Any())
+                {
+                    result.entityList = _mapper.Map<List<HomeSelectListModel>>(query);
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Fatura kesilebilir ev bulunmamaktadır. Lütfen kullanıcıları evlere atayın.";
+                }
             }
             return result;
         }

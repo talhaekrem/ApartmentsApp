@@ -70,13 +70,13 @@ namespace ApartmentsApp.Services.BillServices
                             select new
                             {
                                 Id = bills.Id,
-                                HomePrice = home.HomePrice,
+                                HomePrice = home.Price,
                                 HomeBillDate = home.BillDate,
-                                ElectricPrice = electric.ElectricPrice,
+                                ElectricPrice = electric.Price,
                                 ElectricBillDate = electric.BillDate,
-                                WaterPrice = water.WaterPrice,
+                                WaterPrice = water.Price,
                                 WaterBillDate = water.BillDate,
-                                GasPrice = gas.GasPrice,
+                                GasPrice = gas.Price,
                                 GasBillDate = gas.BillDate
                             };
                 if (query.Any())
@@ -91,5 +91,6 @@ namespace ApartmentsApp.Services.BillServices
             }
             return result;
         }
+    
     }
 }
