@@ -91,6 +91,5 @@ namespace ApartmentsApp.Services.BillServices
             }
             return result;
         }
-    
     }
 }

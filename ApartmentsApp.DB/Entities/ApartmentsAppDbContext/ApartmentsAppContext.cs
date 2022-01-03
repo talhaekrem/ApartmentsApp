@@ -260,6 +260,8 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .HasColumnName("insertDate")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -289,6 +291,10 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .HasMaxLength(11)
                     .IsUnicode(false)
                     .HasColumnName("tcNo");
+
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateDate");
             });
 
             modelBuilder.Entity<WaterBill>(entity =>

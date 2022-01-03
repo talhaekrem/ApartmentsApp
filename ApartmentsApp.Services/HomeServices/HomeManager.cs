@@ -17,9 +17,9 @@ namespace ApartmentsApp.Services.HomeServices
         {
             _mapper = mapper;
         }
-        public BaseModel<HomeDetailModel> Add(HomeAddModel newHome)
+        public BaseModel<HomeDetailsModel> Add(HomeAddModel newHome)
         {
-            var result = new BaseModel<HomeDetailModel>() { isSuccess = false };
+            var result = new BaseModel<HomeDetailsModel>() { isSuccess = false };
             var model = _mapper.Map<ApartmentsApp.DB.Entities.Homes>(newHome);
             using (var _context = new ApartmentsAppContext())
             {
@@ -28,7 +28,7 @@ namespace ApartmentsApp.Services.HomeServices
                 _context.Homes.Add(model);
                 _context.SaveChanges();
                 result.isSuccess = true;
-                result.entity = _mapper.Map<HomeDetailModel>(model);
+                result.entity = _mapper.Map<HomeDetailsModel>(model);
             }
             if (!result.isSuccess)
             {
@@ -37,9 +37,9 @@ namespace ApartmentsApp.Services.HomeServices
             return result;
         }
 
-        public BaseModel<HomeDetailModel> Update(HomeAddModel updateHome)
+        public BaseModel<HomeDetailsModel> Update(HomeAddModel updateHome)
         {
-            var result = new BaseModel<HomeDetailModel>() { isSuccess = false };
+            var result = new BaseModel<HomeDetailsModel>() { isSuccess = false };
             var model = _mapper.Map<ApartmentsApp.DB.Entities.Homes>(updateHome);
             using (var _context = new ApartmentsAppContext())
             {
@@ -51,7 +51,7 @@ namespace ApartmentsApp.Services.HomeServices
                 _context.Entry(home).CurrentValues.SetValues(model);
                 _context.SaveChanges();
                 result.isSuccess = true;
-                result.entity = _mapper.Map<HomeDetailModel>(home);
+                result.entity = _mapper.Map<HomeDetailsModel>(home);
             }
             if (!result.isSuccess)
             {
@@ -120,16 +120,16 @@ namespace ApartmentsApp.Services.HomeServices
         //    return result;
         //}
 
-        public BaseModel<HomeDetailModel> GetHome(int id)
+        public BaseModel<HomeDetailsModel> GetHome(int id)
         {
-            var result = new BaseModel<HomeDetailModel>() { isSuccess = false };
+            var result = new BaseModel<HomeDetailsModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
                 var homes = _context.Homes.FirstOrDefault(h => h.Id == id);
 
                 if (homes is not null)
                 {
-                    result.entity = _mapper.Map<HomeDetailModel>(homes);
+                    result.entity = _mapper.Map<HomeDetailsModel>(homes);
                     result.isSuccess = true;
                 }
                 else
@@ -156,7 +156,6 @@ namespace ApartmentsApp.Services.HomeServices
                 {
                     result.exeptionMessage = "Evin sahipleri vardır. Evi silemezsiniz. Sahibi kaldırmak için evi güncelleyin.";
                 }
-
             }
             return result;
         }
@@ -194,7 +193,7 @@ namespace ApartmentsApp.Services.HomeServices
             using (var _context = new ApartmentsAppContext())
             {
                 //kullanıcıyı ekleyeceğimiz evi modeldeki homeIdye göre dbden alıyorum. 
-                var home = _context.Homes.Where(h => h.Id == userNhome.HomeId).FirstOrDefault();
+                var home = _context.Homes.FirstOrDefault(h => h.Id == userNhome.HomeId);
                 //bu evin sahibine modeldeki UserIdyi veriyorum ve ev sahiplidir alanını true yapıyorum.
                 home.OwnerId = userNhome.UserId;
                 home.IsOwned = true;

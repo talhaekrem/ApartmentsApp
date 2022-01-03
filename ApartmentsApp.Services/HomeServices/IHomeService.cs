@@ -15,11 +15,11 @@ namespace ApartmentsApp.Services.HomeServices
         //fatura ekle kısmında evi seçeceğimiz(dropdown) select listinde sahipli evleri listelediğimiz method sahipli evleri listeler
         BaseModel<HomeSelectListModel> GetBillableHomes();
         //idye göre (aktif, pasif, sahipli, sahipsiz önemli değil) evi getir
-        BaseModel<HomeDetailModel> GetHome(int id);
+        BaseModel<HomeDetailsModel> GetHome(int id);
         //ev ekle
-        BaseModel<HomeDetailModel> Add(HomeAddModel newHome);
+        BaseModel<HomeDetailsModel> Add(HomeAddModel newHome);
         //ev güncelle
-        BaseModel<HomeDetailModel> Update(HomeAddModel updateHome);
+        BaseModel<HomeDetailsModel> Update(HomeAddModel updateHome);
         //evi sil. silmekten kastım bu ev artık kiralanabilir değil. çünkü normalde bir ev silinmez. apartmanda duran daireyi nasıl silcen. isActive false yapıyorum burada
         BaseModel<bool> SetHomeEmpty(int id);
         //boş ve aktif evleri getir

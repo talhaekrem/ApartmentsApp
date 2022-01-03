@@ -21,13 +21,14 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             _mapper = mapper;
         }
 
-        public BaseModel<BillsDetailModel> AddBill(BillsAddModel addBill, BillType type)
+        #region fatura ekle
+        public BaseModel<BillsDetailsModel> AddBill(BillsAddModel addBill, BillType type)
         {
-            var result = new BaseModel<BillsDetailModel>() { isSuccess = false };
+            var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
                 //bu daireye ait son faturanın idsini al. pkdır kendini tekrar etmez
-                int lastBillId = _context.Bills.Where(b => b.HomeId == addBill.HomeId).LastOrDefault().Id;
+                int lastBillId = _context.Bills.LastOrDefault(b => b.HomeId == addBill.HomeId).Id;
 
                 //bu kısım daha önceden bir fatura eklenmemiş ve ilk defa fatura ekliyor demek.
                 //eğer son faturanın üzerinden 30 gün geçmiş mi geçmemiş mi kontrolünü de yapıyoruz.
@@ -44,7 +45,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                     }
                     else
                     {
-                        result.exeptionMessage = "Son faturanın üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz";
+                        result.exeptionMessage = $"Son {BillHelpers.GetEnumDisplayName(type)} faturasının üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz.";
                     }
 
                 }
@@ -75,11 +76,11 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                     }
                     _context.SaveChanges();
                     result.isSuccess = true;
-                    result.entity = _mapper.Map<BillsDetailModel>(model);
+                    result.entity = _mapper.Map<BillsDetailsModel>(model);
                 }
                 else
                 {
-                    result.exeptionMessage = "Son faturanın üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz";
+                    result.exeptionMessage = $"Son {BillHelpers.GetEnumDisplayName(type)} faturasının üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz.";
                 }
             }
             if (!result.isSuccess)
@@ -89,7 +90,9 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             }
             return result;
         }
+        #endregion
 
+        #region fatura sil
         public BaseModel<bool> DeleteBill(int id, BillType type)
         {
             var result = new BaseModel<bool>() { isSuccess = false };
@@ -99,19 +102,19 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                 switch (type)
                 {
                     case BillType.Home:
-                        model = _context.HomeBill.Where(h => h.Id == id).FirstOrDefault();
+                        model = _context.HomeBill.FirstOrDefault(h => h.Id == id);
                         _context.HomeBill.Remove(model);
                         break;
                     case BillType.Electric:
-                        model = _context.ElectricBill.Where(e => e.Id == id).FirstOrDefault();
+                        model = _context.ElectricBill.FirstOrDefault(e => e.Id == id);
                         _context.ElectricBill.Remove(model);
                         break;
                     case BillType.Water:
-                        model = _context.WaterBill.Where(w => w.Id == id).FirstOrDefault();
+                        model = _context.WaterBill.FirstOrDefault(w => w.Id == id);
                         _context.WaterBill.Remove(model);
                         break;
                     case BillType.Gas:
-                        model = _context.GasBill.Where(g => g.Id == id).FirstOrDefault();
+                        model = _context.GasBill.FirstOrDefault(g => g.Id == id);
                         _context.GasBill.Remove(model);
                         break;
                     default:
@@ -127,10 +130,12 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             }
             return result;
         }
+        #endregion
 
-        public BaseModel<BillsDetailModel> GetBillDetails(int id, BillType type)
+        #region idye göre fatura getir
+        public BaseModel<BillsDetailsModel> GetBillDetails(int id, BillType type)
         {
-            var result = new BaseModel<BillsDetailModel>() { isSuccess = false };
+            var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
                 var query = (dynamic)null;
@@ -139,16 +144,16 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                 switch (type)
                 {
                     case BillType.Home:
-                        query = _context.HomeBill.Where(h => h.Id == id).FirstOrDefault();
+                        query = _context.HomeBill.FirstOrDefault(h => h.Id == id);
                         break;
                     case BillType.Electric:
-                        query = _context.ElectricBill.Where(h => h.Id == id).FirstOrDefault();
+                        query = _context.ElectricBill.FirstOrDefault(e => e.Id == id);
                         break;
                     case BillType.Water:
-                        query = _context.WaterBill.Where(h => h.Id == id).FirstOrDefault();
+                        query = _context.WaterBill.FirstOrDefault(w => w.Id == id);
                         break;
                     case BillType.Gas:
-                        query = _context.GasBill.Where(h => h.Id == id).FirstOrDefault();
+                        query = _context.GasBill.FirstOrDefault(g => g.Id == id);
                         break;
                     default:
                         query = null;
@@ -157,7 +162,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
 
                 if (query is not null)
                 {
-                    result.entity = _mapper.Map<BillsDetailModel>(query);
+                    result.entity = _mapper.Map<BillsDetailsModel>(query);
                     result.isSuccess = true;
                 }
                 else
@@ -167,11 +172,12 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             }
             return result;
         }
+        #endregion
 
-        public BaseModel<BillsDetailModel> UpdateBill(BillsUpdateModel updateBill, BillType type)
+        #region fatura güncelle
+        public BaseModel<BillsDetailsModel> UpdateBill(BillsUpdateModel updateBill, BillType type)
         {
-            //updatei yap 
-            var result = new BaseModel<BillsDetailModel>() { isSuccess = false };
+            var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
                 var model = (dynamic)null;
@@ -183,7 +189,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                         model.PaymentDate = home.PaymentDate;
                         _context.Entry(home).CurrentValues.SetValues(model);
                         _context.SaveChanges();
-                        result.entity = _mapper.Map<BillsDetailModel>(home);
+                        result.entity = _mapper.Map<BillsDetailsModel>(home);
                         break;
                     case BillType.Electric:
                         model = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(updateBill);
@@ -191,7 +197,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                         model.PaymentDate = electric.PaymentDate;
                         _context.Entry(electric).CurrentValues.SetValues(model);
                         _context.SaveChanges();
-                        result.entity = _mapper.Map<BillsDetailModel>(electric);
+                        result.entity = _mapper.Map<BillsDetailsModel>(electric);
                         break;
                     case BillType.Water:
                         model = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(updateBill);
@@ -199,7 +205,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                         model.PaymentDate = water.PaymentDate;
                         _context.Entry(water).CurrentValues.SetValues(model);
                         _context.SaveChanges();
-                        result.entity = _mapper.Map<BillsDetailModel>(water);
+                        result.entity = _mapper.Map<BillsDetailsModel>(water);
                         break;
                     case BillType.Gas:
                         model = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(updateBill);
@@ -207,7 +213,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                         model.PaymentDate = gas.PaymentDate;
                         _context.Entry(gas).CurrentValues.SetValues(model);
                         _context.SaveChanges();
-                        result.entity = _mapper.Map<BillsDetailModel>(gas);
+                        result.entity = _mapper.Map<BillsDetailsModel>(gas);
                         break;
                     default:
                         model = null;
@@ -221,7 +227,9 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             }
             return result;
         }
+        #endregion
 
+        #region fatura kesilebilir mi
         private bool CanTakeBill(int id, BillType type)
         {
             var isTrue = false;
@@ -230,25 +238,25 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                 switch (type)
                 {
                     case BillType.Home:
-                        if (BillHelpers.IsNextMonth(_context.HomeBill.Where(h => h.BillsId == id).FirstOrDefault().BillDate))
+                        if (BillHelpers.IsNextMonth(_context.HomeBill.FirstOrDefault(h => h.BillsId == id).BillDate))
                         {
                             isTrue = true;
                         }
                         break;
                     case BillType.Electric:
-                        if (BillHelpers.IsNextMonth(_context.ElectricBill.Where(h => h.BillsId == id).FirstOrDefault().BillDate))
+                        if (BillHelpers.IsNextMonth(_context.ElectricBill.FirstOrDefault(e => e.BillsId == id).BillDate))
                         {
                             isTrue = true;
                         }
                         break;
                     case BillType.Water:
-                        if (BillHelpers.IsNextMonth(_context.WaterBill.Where(h => h.BillsId == id).FirstOrDefault().BillDate))
+                        if (BillHelpers.IsNextMonth(_context.WaterBill.FirstOrDefault(w => w.BillsId == id).BillDate))
                         {
                             isTrue = true;
                         }
                         break;
                     case BillType.Gas:
-                        if (BillHelpers.IsNextMonth(_context.GasBill.Where(h => h.BillsId == id).FirstOrDefault().BillDate))
+                        if (BillHelpers.IsNextMonth(_context.GasBill.FirstOrDefault(g => g.BillsId == id).BillDate))
                         {
                             isTrue = true;
                         }
@@ -259,5 +267,6 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             };
             return isTrue;
         }
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApartmentsApp.Models.Homes
 {
-    public class HomeDetailModel
+    public class HomeDetailsModel
     {
         public int Id { get; set; }
         public int? OwnerId { get; set; }

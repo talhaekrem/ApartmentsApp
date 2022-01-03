@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-#nullable disable
-
-namespace ApartmentsApp.DB.Entities
+namespace ApartmentsApp.Models.Users
 {
-    public partial class Users
+    public class UserDetailsModel
     {
-        public Users()
-        {
-            Homes = new HashSet<Homes>();
-            MessagesReceiver = new HashSet<Messages>();
-            MessagesSender = new HashSet<Messages>();
-        }
-
         public int Id { get; set; }
-        public string AspNetUserId { get; set; }
         public string TcNo { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }
@@ -27,9 +20,5 @@ namespace ApartmentsApp.DB.Entities
         public DateTime InsertDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public bool IsDeleted { get; set; }
-
-        public virtual ICollection<Homes> Homes { get; set; }
-        public virtual ICollection<Messages> MessagesReceiver { get; set; }
-        public virtual ICollection<Messages> MessagesSender { get; set; }
     }
 }

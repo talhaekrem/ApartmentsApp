@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApartmentsApp.Models.Bills.CustomBills
 {
-    public class BillsDetailModel
+    public class BillsDetailsModel
     {
         public int Id { get; set; }
         public int BillsId { get; set; }

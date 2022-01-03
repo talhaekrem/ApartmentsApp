@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,5 +28,9 @@ namespace ApartmentsApp.Core.Bills
             return false;
         }
 
+        public static string GetEnumDisplayName(this Enum billType)
+        {
+            return billType.GetType().GetMember(billType.ToString()).First().GetCustomAttribute<DisplayAttribute>().Name;
+        }
     }
 }
