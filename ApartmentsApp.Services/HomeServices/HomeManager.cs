@@ -187,5 +187,36 @@ namespace ApartmentsApp.Services.HomeServices
             }
             return result;
         }
+
+        public BaseModel<UserAddToHomeModel> AddUserToHome(UserAddToHomeModel userNhome)
+        {
+            var result = new BaseModel<UserAddToHomeModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                //kullanıcıyı ekleyeceğimiz evi modeldeki homeIdye göre dbden alıyorum. 
+                var home = _context.Homes.Where(h => h.Id == userNhome.HomeId).FirstOrDefault();
+                //bu evin sahibine modeldeki UserIdyi veriyorum ve ev sahiplidir alanını true yapıyorum.
+                home.OwnerId = userNhome.UserId;
+                home.IsOwned = true;
+                //yeni verilerle evi güncelle
+                _context.Homes.Update(home);
+                _context.SaveChanges();
+
+                //geriye döneceğim modeli dolduruyorum
+                UserAddToHomeModel sendModel = new() {
+                    HomeId = home.Id,
+                    UserId = userNhome.UserId,
+                    DisplayName = _context.Users.Where(u => u.Id == userNhome.UserId).Select(x => x.DisplayName).FirstOrDefault(),
+                    DoorNumber = home.DoorNumber
+                };
+                result.entity = sendModel;
+                result.isSuccess = true;
+            }
+            if (!result.isSuccess)
+            {
+                result.exeptionMessage = "Kullanıcıyı eve atarken bir sorun oluştu. Daha sonra tekrar deneyin.";
+            }
+            return result;
+        }
     }
 }

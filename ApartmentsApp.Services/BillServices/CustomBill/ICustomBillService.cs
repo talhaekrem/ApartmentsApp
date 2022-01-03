@@ -12,8 +12,8 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
     public interface ICustomBillService
     {
         BaseModel<BillsDetailModel> GetBillDetails(int id, BillType type);
-        BaseModel<BillsDetailModel> AddBill(BillsAddModel bill, BillType type);
-        BaseModel<BillsDetailModel> UpdateBill(BillsUpdateModel bill, BillType type);
+        BaseModel<BillsDetailModel> AddBill(BillsAddModel addBill, BillType type);
+        BaseModel<BillsDetailModel> UpdateBill(BillsUpdateModel updateBill, BillType type);
         BaseModel<bool> DeleteBill(int id, BillType type);
     }
 }

@@ -10,11 +10,11 @@ namespace ApartmentsApp.Services.HomeServices
 {
     public interface IHomeService
     {
-        //tüm evleri listele
+        //tüm evleri filtresiz bir şekilde listele
         BaseModel<HomeListModel> GetAll();
-
+        //fatura ekle kısmında evi seçeceğimiz(dropdown) select listinde sahipli evleri listelediğimiz method sahipli evleri listeler
         BaseModel<HomeSelectListModel> GetBillableHomes();
-        //idye göre (aktif pasif önemli değil) evi getir
+        //idye göre (aktif, pasif, sahipli, sahipsiz önemli değil) evi getir
         BaseModel<HomeDetailModel> GetHome(int id);
         //ev ekle
         BaseModel<HomeDetailModel> Add(HomeAddModel newHome);
@@ -26,7 +26,7 @@ namespace ApartmentsApp.Services.HomeServices
         //BaseModel<HomeListModel> GetEmptyHomes();
         //sadece aktif evleri listele dataTableda bu method çalışacak
         //BaseModel<HomeListModel> GetActiveHomes();
-
         //kullanıcıya ev ata gibi bir method yaz. modelden gelen userId ve homeIdlere göre homes tablosundaki ownerIdyi doldur.
+        BaseModel<UserAddToHomeModel> AddUserToHome(UserAddToHomeModel userNhome);
     }
 }
