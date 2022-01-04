@@ -85,11 +85,24 @@ namespace ApartmentsApp.Services.HomeServices
             var result = new BaseModel<HomeListModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                var homes = _context.Homes;
+                var homes = from home in _context.Homes
+                            join user in _context.Users
+                            on home.OwnerId equals user.Id into homeList
+                            from user in homeList.DefaultIfEmpty()
+                            select new HomeListModel()
+                            {
+                                Id = home.Id,
+                                OwnerId = user.Id,
+                                OwnerDisplayName = user.DisplayName == null ? "Boş" : user.DisplayName,
+                                BlockName = home.BlockName,
+                                DoorNumber = home.DoorNumber,
+                                FloorNumber = home.FloorNumber,
+                                IsActive = home.IsActive,
+                            };
 
                 if (homes.Any())
                 {
-                    result.entityList = _mapper.Map<List<HomeListModel>>(homes);
+                    result.entityList = homes.ToList();
                     result.isSuccess = true;
                 }
                 else
@@ -169,14 +182,14 @@ namespace ApartmentsApp.Services.HomeServices
                             where home.IsActive && home.IsOwned
                             join user in _context.Users
                             on home.OwnerId equals user.Id
-                            select new
+                            select new HomeSelectListModel()
                             {
                                 Id = home.Id,
                                 OwnerName = user.DisplayName
                             };
                 if (query.Any())
                 {
-                    result.entityList = _mapper.Map<List<HomeSelectListModel>>(query);
+                    result.entityList = query.ToList();
                     result.isSuccess = true;
                 }
                 else
@@ -202,7 +215,8 @@ namespace ApartmentsApp.Services.HomeServices
                 _context.SaveChanges();
 
                 //geriye döneceğim modeli dolduruyorum
-                UserAddToHomeModel sendModel = new() {
+                UserAddToHomeModel sendModel = new()
+                {
                     HomeId = home.Id,
                     UserId = userNhome.UserId,
                     DisplayName = _context.Users.Where(u => u.Id == userNhome.UserId).Select(x => x.DisplayName).FirstOrDefault(),

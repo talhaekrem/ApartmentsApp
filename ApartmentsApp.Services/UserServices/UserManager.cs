@@ -61,7 +61,7 @@ namespace ApartmentsApp.Services.UserServices
             {
                 var query = from user in _context.Users
                             where user.IsDeleted == false && user.Id != currentUserId
-                            select new
+                            select new UserSelectListModel()
                             {
                                 Id = user.Id,
                                 Name = user.Name,
@@ -69,7 +69,7 @@ namespace ApartmentsApp.Services.UserServices
                             };
                 if (query.Any())
                 {
-                    result.entityList = _mapper.Map<List<UserSelectListModel>>(query);
+                    result.entityList = query.ToList();
                     result.isSuccess = true;
                 }
                 else

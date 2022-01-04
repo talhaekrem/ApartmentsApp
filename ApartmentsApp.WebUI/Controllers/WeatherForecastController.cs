@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApartmentsApp.API.Controllers
+namespace ApartmentsApp.WebUI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -12,11 +12,6 @@ namespace ApartmentsApp.Services.BillServices
 {
     public class BillManager : IBillService
     {
-        private readonly IMapper _mapper;
-        public BillManager(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
         public BaseModel<BillsListAdminModel> GetAllAsAdmin()
         {
             var result = new BaseModel<BillsListAdminModel>() { isSuccess = false };
@@ -33,18 +28,18 @@ namespace ApartmentsApp.Services.BillServices
                             from gas in _context.GasBill
                             join bills in _context.Bills
                             on home.BillsId | water.BillsId | electric.BillsId | gas.BillsId equals bills.Id
-                            select new
+                            select new BillsListAdminModel()
                             {
                                 Id = bills.Id,
                                 HomeId = bills.HomeId,
-                                isHomeBillPaid = home.IsPaid,
+                                IsHomeBillPaid = home.IsPaid,
                                 IsElectricBillPaid = electric.IsPaid,
                                 IsWaterBillPaid = water.IsPaid,
                                 IsGasBillPaid = gas.IsPaid
                             };
                 if (query.Any())
                 {
-                    result.entityList = _mapper.Map<List<BillsListAdminModel>>(query);
+                    result.entityList = query.ToList();
                     result.isSuccess = true;
                 }
                 else
@@ -67,7 +62,7 @@ namespace ApartmentsApp.Services.BillServices
                             from gas in _context.GasBill
                             join bills in _context.Bills
                             on home.BillsId | water.BillsId | electric.BillsId | gas.BillsId equals bills.Id
-                            select new
+                            select new BillsListUserModel()
                             {
                                 Id = bills.Id,
                                 HomePrice = home.Price,
@@ -81,7 +76,7 @@ namespace ApartmentsApp.Services.BillServices
                             };
                 if (query.Any())
                 {
-                    result.entityList = _mapper.Map<List<BillsListUserModel>>(query);
+                    result.entityList = query.ToList();
                     result.isSuccess = true;
                 }
                 else

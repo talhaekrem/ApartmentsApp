@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApartmentsApp.API", "Apartm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApartmentsApp.Models", "ApartmentsApp.Models\ApartmentsApp.Models.csproj", "{C10160E0-4EA3-4E57-97CA-13D26773B6E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApartmentsApp.Core", "ApartmentsApp.Core\ApartmentsApp.Core.csproj", "{7F700DCA-666F-4155-9883-20A9579EE888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApartmentsApp.Core", "ApartmentsApp.Core\ApartmentsApp.Core.csproj", "{7F700DCA-666F-4155-9883-20A9579EE888}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApartmentsApp.WebUI", "ApartmentsApp.WebUI\ApartmentsApp.WebUI.csproj", "{88B7C1E9-610B-4FF7-8826-BB49E04F1760}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7F700DCA-666F-4155-9883-20A9579EE888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F700DCA-666F-4155-9883-20A9579EE888}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F700DCA-666F-4155-9883-20A9579EE888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

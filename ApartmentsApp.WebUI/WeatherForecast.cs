@@ -1,6 +1,6 @@
 using System;
 
-namespace ApartmentsApp.API
+namespace ApartmentsApp.WebUI
 {
     public class WeatherForecast
     {
