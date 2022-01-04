@@ -185,6 +185,11 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .ValueGeneratedNever()
                     .HasColumnName("id");
 
+                entity.Property(e => e.InsertDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("insertDate")
+                    .HasDefaultValueSql("(getdate())");
+
                 entity.Property(e => e.IsReceiverReaded).HasColumnName("isReceiverReaded");
 
                 entity.Property(e => e.IsSenderReaded).HasColumnName("isSenderReaded");
@@ -209,6 +214,10 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .HasMaxLength(1000)
                     .IsUnicode(false)
                     .HasColumnName("senderMessage");
+
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateDate");
 
                 entity.HasOne(d => d.Receiver)
                     .WithMany(p => p.MessagesReceiver)

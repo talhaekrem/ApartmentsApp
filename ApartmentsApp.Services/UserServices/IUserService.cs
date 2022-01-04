@@ -20,5 +20,9 @@ namespace ApartmentsApp.Services.UserServices
         BaseModel<UserDetailsModel> Update(UserUpdateModel updateUser);
         //kullanıcıyı devre dışı bırak
         BaseModel<bool> Delete(int id);
+
+        int GetCurrentUserId(string AspNetUserId);
+
+        BaseModel<UserSelectListModel> FillDropdownWithUsers(int currentUserId);
     }
 }

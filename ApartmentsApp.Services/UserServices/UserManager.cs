@@ -53,6 +53,33 @@ namespace ApartmentsApp.Services.UserServices
             return result;
         }
 
+        //mevcut kullanıcının idsini almamın sebebi: listede kendisi de gelmesin diye
+        public BaseModel<UserSelectListModel> FillDropdownWithUsers(int currentUserId)
+        {
+            var result = new BaseModel<UserSelectListModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                var query = from user in _context.Users
+                            where user.IsDeleted == false && user.Id != currentUserId
+                            select new
+                            {
+                                Id = user.Id,
+                                Name = user.Name,
+                                SurName = user.SurName
+                            };
+                if (query.Any())
+                {
+                    result.entityList = _mapper.Map<List<UserSelectListModel>>(query);
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Kullanıcı bulunmadı.";
+                }
+            }
+            return result;
+        }
+
         public BaseModel<UserListModel> GetAll()
         {
             var result = new BaseModel<UserListModel>() { isSuccess = false };
@@ -90,6 +117,19 @@ namespace ApartmentsApp.Services.UserServices
                 }
             }
             return result;
+        }
+
+        // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //arayüz tarafında asp net identity ile login olmuş kullanıcının ClaimTypelarından NameIdentifier özelliğiyle aspNetUserIdsini alabiliyoruz
+        //Bu id ile kendi Users tablomuzdaki userı alıyoruz. Çünkü kullanacağımız veriler hep kendi User tablomuzda.
+        // Bu sebepten hangi kullanıcı login olmuş ve işlem yaptığını bu methodla öğreneceğiz.
+        public int GetCurrentUserId(string AspNetUserId)
+        {
+            using (var _context = new ApartmentsAppContext())
+            {
+                int userId = _context.Users.FirstOrDefault(u => u.AspNetUserId == AspNetUserId).Id;
+                return userId;
+            }
         }
 
         public BaseModel<UserDetailsModel> Update(UserUpdateModel updateUser)

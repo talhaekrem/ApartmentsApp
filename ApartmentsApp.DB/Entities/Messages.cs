@@ -15,6 +15,8 @@ namespace ApartmentsApp.DB.Entities
         public string MessageTitle { get; set; }
         public string SenderMessage { get; set; }
         public string ReceiverMessage { get; set; }
+        public DateTime InsertDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
         public virtual Users Receiver { get; set; }
         public virtual Users Sender { get; set; }
