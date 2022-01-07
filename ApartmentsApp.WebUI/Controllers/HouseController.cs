@@ -1,5 +1,6 @@
 ﻿using ApartmentsApp.Models;
 using ApartmentsApp.Models.Homes;
+using ApartmentsApp.Models.Users;
 using ApartmentsApp.Services.HomeServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ApartmentsApp.WebUI.Controllers
 {
-    [Route("[controller]s")]
+    [Route("api/[controller]s")]
     [ApiController]
     //[Authorize]
     public class HouseController : ControllerBase

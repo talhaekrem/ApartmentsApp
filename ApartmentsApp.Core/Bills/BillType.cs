@@ -9,7 +9,7 @@ namespace ApartmentsApp.Core.Bills
 {
     public enum BillType
     {
-        [Display(Name = "Kira - Aidat")]
+        [Display(Name = "Aidat")]
         Home = 0,
         [Display(Name = "Elektrik")]
         Electric = 1,
