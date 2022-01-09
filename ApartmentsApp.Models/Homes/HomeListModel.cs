@@ -9,7 +9,6 @@ namespace ApartmentsApp.Models.Homes
     public class HomeListModel
     {
         public int Id { get; set; }
-        public int? OwnerId { get; set; }
         public string? OwnerDisplayName { get; set; }
         public bool IsActive { get; set; }
         public string BlockName { get; set; }

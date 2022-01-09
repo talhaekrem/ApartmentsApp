@@ -1,6 +1,5 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
@@ -16,7 +15,8 @@ import {
     Container,
     Typography,
     TableContainer,
-    TablePagination
+    TablePagination,
+    CircularProgress
 } from '@mui/material';
 // components
 import Page from '../../components/Page';
@@ -24,8 +24,6 @@ import Label from '../../components/Label';
 import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
 import { HouseListHead, HouseListToolbar, HouseMoreMenu } from '../../components/_dashboard/houses';
-//
-//import HOUSELIST from '../_mocks_/Houses';
 
 //request
 import axios from "axios";
@@ -34,11 +32,11 @@ import axios from "axios";
 
 const TABLE_HEAD = [
     { id: 'Id', label: 'Id', alignRight: false },
-    { id: 'OwnerDisplayName', label: 'Evin Sahipleri', alignRight: false },
-    { id: 'IsActive', label: 'Evin Durumu', alignRight: false },
-    { id: 'BlockName', label: 'Blok Adı', alignRight: false },
-    { id: 'FloorNumber', label: 'Kat', alignRight: false },
-    { id: 'DoorNumber', label: 'Kapı No', alignRight: false },
+    { id: 'ownerDisplayName', label: 'Evin Sahipleri', alignRight: false },
+    { id: 'isActive', label: 'Evin Durumu', alignRight: false },
+    { id: 'blockName', label: 'Blok Adı', alignRight: false },
+    { id: 'floorNumber', label: 'Kat', alignRight: false },
+    { id: 'doorNumber', label: 'Kapı No', alignRight: false },
     { id: '' }
 ];
 
@@ -53,7 +51,6 @@ function descendingComparator(a, b, orderBy) {
     }
     return 0;
 }
-
 function getComparator(order, orderBy) {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
@@ -68,17 +65,26 @@ function applySortFilter(array, comparator, query) {
         return a[1] - b[1];
     });
     if (query) {
-        return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+        return filter(array, function(row){
+            if(row.ownerDisplayName.toLowerCase().indexOf(query.toLowerCase()) === -1){
+                return row.blockName.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+            }else{
+                return row.ownerDisplayName.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+            }
+        })
     }
     return stabilizedThis.map((el) => el[0]);
 }
 
 export default function House() {
-    const [house, setHouse] = useState([]);
+    //loading kısmı
+    const [loading,setLoading] = useState(true);
+    const [house, setHouse] = useState({});
     useEffect(() => {
         axios("/api/Houses")
             .then((res) => setHouse(res.data))
             .catch((e) => console.log(e))
+            .finally(() => setLoading(false));
     }, []);
     if (house.entityList == null) {
         house.entityList = []
@@ -88,6 +94,7 @@ export default function House() {
     const [orderBy, setOrderBy] = useState('name');
     const [filterName, setFilterName] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(5);
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -118,7 +125,7 @@ export default function House() {
         <Page title="Evler | My Apartments">
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4" gutterBottom>
+                    <Typography variant="h3" gutterBottom>
                         Evler
                     </Typography>
                     <Button
@@ -151,29 +158,28 @@ export default function House() {
                                     {filteredUsers
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row) => {
-                                            const { Id, OwnerDisplayName, IsActive, BlockName, FloorNumber, DoorNumber } = row;
+                                            const { id, ownerDisplayName, isActive, blockName, floorNumber, doorNumber } = row;
 
                                             return (
                                                 <TableRow
                                                     hover
-                                                    key={Id}
+                                                    key={id}
                                                     tabIndex={-1}
                                                 >
-                                                    <TableCell align="left">{Id}</TableCell>
-                                                    <TableCell align="left" >{OwnerDisplayName}</TableCell>
+                                                    <TableCell align="left">{id}</TableCell>
+                                                    <TableCell align="left" >{ownerDisplayName}</TableCell>
                                                     <TableCell align="left">
                                                         <Label
                                                             variant="ghost"
-                                                            color={(IsActive === true && 'error') || 'success'}
-                                                        >
-                                                            {sentenceCase(IsActive)}
+                                                            color={(isActive === false && 'error') || 'success'}>
+                                                            {isActive ? "aktif" : "pasif"}
                                                         </Label>
                                                     </TableCell>
-                                                    <TableCell align="left">{BlockName}</TableCell>
-                                                    <TableCell align="left">{FloorNumber}</TableCell>
-                                                    <TableCell align="left">{DoorNumber}</TableCell>
+                                                    <TableCell align="left">{blockName}</TableCell>
+                                                    <TableCell align="left">{floorNumber}</TableCell>
+                                                    <TableCell align="left">{doorNumber}</TableCell>
                                                     <TableCell align="right">
-                                                        <HouseMoreMenu />
+                                                        <HouseMoreMenu houseId={id} />
                                                     </TableCell>
                                                 </TableRow>
                                             );
@@ -184,6 +190,15 @@ export default function House() {
                                         </TableRow>
                                     )}
                                 </TableBody>
+                                {loading && (
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell align="center" colSpan={7} sx={{py:3}}>
+                                            <CircularProgress />
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                )}
                                 {isUserNotFound && (
                                     <TableBody>
                                         <TableRow>

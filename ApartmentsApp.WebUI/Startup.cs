@@ -26,14 +26,14 @@ namespace ApartmentsApp.WebUI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //mapping oluþturma
+            //mapping oluï¿½turma
             var _mappingProfile = new MapperConfiguration(mp => { mp.AddProfile(new MappingProfile()); });
-            //mapper objesini inject etmek için interfaceden kendi classýmýzdan oluþturduðumuz objeyi map için create ediyoruz.
+            //mapper objesini inject etmek iï¿½in interfaceden kendi classï¿½mï¿½zdan oluï¿½turduï¿½umuz objeyi map iï¿½in create ediyoruz.
             IMapper mapper = _mappingProfile.CreateMapper();
-            //mapperý inject ediyoruz.
+            //mapperï¿½ inject ediyoruz.
             services.AddSingleton(mapper);
 
-            //servislerdeki dependency injection tanýmlamlarý
+            //servislerdeki dependency injection tanï¿½mlamlarï¿½
             services.AddScoped<IBillService, BillManager>();
             services.AddScoped<ICustomBillService, CustomBillManager>();
             services.AddScoped<IHomeService, HomeManager>();
@@ -66,7 +66,7 @@ namespace ApartmentsApp.WebUI
 
             app.UseRouting();
 
-            //identity için
+            //identity icin
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -77,7 +77,7 @@ namespace ApartmentsApp.WebUI
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            //single page application. yani react için kurulum kýsmý
+            //single page application. yani react icin kurulum kÄ±smÄ±
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";

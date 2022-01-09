@@ -34,12 +34,12 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-UserListToolbar.propTypes = {
+HouseListToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func
 };
 
-export default function UserListToolbar({ filterName, onFilterName }) {
+export default function HouseListToolbar({ filterName, onFilterName }) {
   return (
     <RootStyle>
         <SearchStyle

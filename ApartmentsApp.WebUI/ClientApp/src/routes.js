@@ -9,15 +9,18 @@ import DashboardApp from './pages/DashboardApp';
 //import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
-import House from './pages/House/House';
 import NotFound from './pages/Page404';
+// ----------------------------------------------------------------------
+import House from './pages/House/House';
 import AddHouse from './pages/House/AddHouse';
+import UpdateHouse from './pages/House/UpdateHouse';
+import DetailHouse from './pages/House/DetailHouse';
 // ----------------------------------------------------------------------
 
 export default function Router() {
     return useRoutes([
         {
-            //admin sayfalarý
+            //admin sayfalarï¿½
             path: '/admin',
             element: <DashboardLayout />,
             children: [
@@ -30,7 +33,7 @@ export default function Router() {
 
             ]
         },
-        //kullanýcý sayfalarý
+        //kullanÄ±cÄ± sayfalarÄ±
         {
             path: '/home',
             element: <DashboardLayout />,
@@ -46,11 +49,11 @@ export default function Router() {
             element: <DashboardLayout />,
             children: [
                 { path: 'add', element: <AddHouse /> },
-                { path: 'update', element: <Login /> },
-                { path: 'detail', element: <Login /> },
+                { path: 'update/:houseId', element: <UpdateHouse /> },
+                { path: 'detail/:houseId', element: <DetailHouse /> },
             ]
         },
-        //login register sayfalarý
+        //login register sayfalarï¿½
         {
             path: '/account',
             element: <LogoOnlyLayout />,

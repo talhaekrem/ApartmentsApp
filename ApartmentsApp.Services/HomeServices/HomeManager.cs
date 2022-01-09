@@ -92,7 +92,6 @@ namespace ApartmentsApp.Services.HomeServices
                             select new HomeListModel()
                             {
                                 Id = home.Id,
-                                OwnerId = user.Id,
                                 OwnerDisplayName = user.DisplayName == null ? "Boş" : user.DisplayName,
                                 BlockName = home.BlockName,
                                 DoorNumber = home.DoorNumber,

@@ -44,12 +44,17 @@ namespace ApartmentsApp.WebUI.Controllers
         public BaseModel<HomeDetailsModel> InsertOrUpdate([FromBody] HomeAddModel home)
         {
             BaseModel<HomeDetailsModel> response = new();
-            if(home is { Id: > 0 })
+            if (home.OwnerId == 0)
+            {
+                home.OwnerId = null;
+            }
+            if (home is { Id: > 0 })
             {
                 response = _homeService.Update(home);
             }
             else
             {
+
                 response = _homeService.Add(home);
             }
             return response;

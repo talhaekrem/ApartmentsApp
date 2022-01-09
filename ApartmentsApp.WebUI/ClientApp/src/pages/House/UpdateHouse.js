@@ -1,24 +1,35 @@
 import * as Yup from 'yup';
 import { useState, useEffect } from 'react';
+import {useParams} from 'react-router-dom';
+
 import { useFormik, Form, FormikProvider } from 'formik';
 // material
 import { Stack, TextField, Switch, Autocomplete, FormControlLabel, Alert,Button, Typography, Container } from '@mui/material';
 import axios from 'axios';
 import Page from '../../components/Page';
 
-export default function AddHouse() {
-    const [result,setResult] = useState([]);
+export default function UpdateHouse() {
+    //gelen evin idsi
+    const {houseId} = useParams();
+
+    //idye göre evi getiriyorum
+    const [currentHouse, setCurrentHouse] = useState({});
     const [users, setUsers] = useState([]);
+    
     useEffect(() => {
+        axios.get(`/api/Houses/${houseId}`)
+        .then(res => setCurrentHouse(res.data.entity))
+        .catch(err => console.error(err));
+
         axios("/api/Users")
-            .then((res) => setUsers(res.data))
-            .catch((e) => console.log(e))
-    }, []);
+        .then((res) => setUsers(res.data));
+    }, [houseId]);
     if (users.entityList == null) {
         users.entityList = []
     };
-
+    //validasyon şeması
     const schema = Yup.object().shape({
+        Id: Yup.number(),
         OwnerId: Yup.number(),
         IsOwned: Yup.bool(),
         BlockName: Yup.string().max(25, 'Blok adı çok uzun').required('Blok Adı zorunludur'),
@@ -26,37 +37,38 @@ export default function AddHouse() {
         FloorNumber: Yup.number().min(0, 'Ev, 0 dan küçük katta olamaz').required('Kat bilgisi gereklidir'),
         DoorNumber: Yup.number().min(0, 'Kapı numarası 0 dan küçük olamaz').required('Kapı numarası zorunludur')
     });
-
-
+    const [result, setResult] = useState([]);
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            OwnerId: 0,
-            IsOwned: false,
-            BlockName: "",
-            HomeType: "",
-            FloorNumber: "",
-            DoorNumber: ""
+            Id:currentHouse.id,
+            OwnerId: currentHouse.ownerId ?? 0,
+            IsOwned: currentHouse.isOwned ?? false,
+            IsActive:currentHouse.isActive ?? false,
+            BlockName: currentHouse.blockName ?? "",
+            HomeType: currentHouse.homeType ?? "",
+            FloorNumber: currentHouse.floorNumber ?? "",
+            DoorNumber: currentHouse.doorNumber ?? ""
         },
         validationSchema: schema,
-        onSubmit: (newHouse, {resetForm}) => {
+        onSubmit: (newHouse) => {
             fetch("/api/Houses", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newHouse)})
                 .then(resp=> resp.json())
                 .then(data => setResult(data))
-                .then(resetForm(newHouse=''))
         }
     });
     const { errors, touched, handleSubmit, getFieldProps, values } = formik;
 
-
     return (
-        <Page title="Yeni Ev Ekle | My Apartments">
+
+        <Page title="Evi Güncelle | My Apartments">
             <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h3" gutterBottom>
-                        Yeni Ev Ekle
+                        Evi Güncelle
                     </Typography>
                 </Stack>
             <FormikProvider value={formik}>
@@ -64,13 +76,12 @@ export default function AddHouse() {
             <Form onSubmit={handleSubmit}>
                 <Stack spacing={2} mb={3}>
                     { result.isSuccess === true &&
-                <Alert severity="success">Ev ekleme işlemi başarılı</Alert>
+                <Alert severity="success">Ev başarıyla güncellendi</Alert>
                 }
                 {result.isSuccess === false && <Alert severity='error'>{result.exeptionMessage}</Alert>
-                
                 }
                     
-                    </Stack>
+                </Stack>
                 <Stack spacing={3}>
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                         <TextField
@@ -122,19 +133,26 @@ export default function AddHouse() {
                         />
                     </Stack>
 
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <FormControlLabel
+                            control={<Switch {...getFieldProps('IsActive')} checked={values.IsActive} />}
+                            label="Ev Aktif mi?"
+                        />
+                    </Stack>
+
                     <Button
+                    color="warning"
                         fullWidth
                         size="large"
                         type="submit"
                         variant="contained"
                     >
-                        Ekle
+                        Güncelle
                     </Button>
                 </Stack>
             </Form>
         </FormikProvider>
             </Container>
         </Page>
-
-    );
+    )
 }
