@@ -85,11 +85,27 @@ namespace ApartmentsApp.Services.UserServices
             var result = new BaseModel<UserListModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                var users = _context.Users;
+                //left join. user tablosundaki verileri getiriyorum. birde eğer varsa home tablosundaki kapı no ve blok adını alıyorum
+                var users = from user in _context.Users
+                            join homes in _context.Homes
+                            on user.Id equals homes.OwnerId into userList
+                            from homes in userList.DefaultIfEmpty()
+                            select new UserListModel()
+                            {
+                                Name = user.Name,
+                                SurName = user.SurName,
+                                TcNo = user.TcNo,
+                                Email = user.Email,
+                                PhoneNumber = user.PhoneNumber,
+                                BlockName = homes.BlockName == null ? "Yok" : homes.BlockName,
+                                DoorNumber = homes.DoorNumber,
+                                IsAdmin = user.IsAdmin
+                            };
+                //var users = _context.Users;
 
                 if (users.Any())
                 {
-                    result.entityList = _mapper.Map<List<UserListModel>>(users);
+                    result.entityList = users.ToList();
                     result.isSuccess = true;
                 }
                 else
@@ -119,18 +135,37 @@ namespace ApartmentsApp.Services.UserServices
             return result;
         }
 
+        public BaseModel<UserDetailsModel> GetByTcNo(string tcNo)
+        {
+            var result = new BaseModel<UserDetailsModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                var user = _context.Users.FirstOrDefault(u => u.TcNo == tcNo);
+                if (user is not null)
+                {
+                    result.entity = _mapper.Map<UserDetailsModel>(user);
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Girdiğiniz tcye ait kullanıcı bulunmamaktadır.";
+                }
+            }
+            return result;
+        }
+
         // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         //arayüz tarafında asp net identity ile login olmuş kullanıcının ClaimTypelarından NameIdentifier özelliğiyle aspNetUserIdsini alabiliyoruz
         //Bu id ile kendi Users tablomuzdaki userı alıyoruz. Çünkü kullanacağımız veriler hep kendi User tablomuzda.
         // Bu sebepten hangi kullanıcı login olmuş ve işlem yaptığını bu methodla öğreneceğiz.
-        public int GetCurrentUserId(string AspNetUserId)
-        {
-            using (var _context = new ApartmentsAppContext())
-            {
-                int userId = _context.Users.FirstOrDefault(u => u.AspNetUserId == AspNetUserId).Id;
-                return userId;
-            }
-        }
+        //public int GetCurrentUserId(string AspNetUserId)
+        //{
+        //    using (var _context = new ApartmentsAppContext())
+        //    {
+        //        int userId = _context.Users.FirstOrDefault(u => u.AspNetUserId == AspNetUserId).Id;
+        //        return userId;
+        //    }
+        //}
 
         public BaseModel<UserDetailsModel> Update(UserUpdateModel updateUser)
         {

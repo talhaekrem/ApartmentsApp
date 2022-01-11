@@ -1,19 +1,16 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 // material
 import {
-  Link,
   Stack,
-  Checkbox,
   TextField,
   IconButton,
   InputAdornment,
-  FormControlLabel
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
@@ -24,47 +21,50 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required')
+    tcNo: Yup.string().min(11,"TC kimlik numarası 11 haneden oluşmalıdır").max(11,"TC kimlik numarası 11 haneden oluşmalıdır").required('TC kimlik no gereklidir'),
+    password: Yup.string().required('Şifre gereklidir')
   });
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      tcNo: '',
       password: '',
-      remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (login) => {
+      fetch("/Account/Login",{
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        credentials :"include",
+        body: JSON.stringify(login)
+      })
+    navigate('/dashboard', { replace: true });
     }
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, isSubmitting, handleSubmit, getFieldProps } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
   };
-
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+      <Form onSubmit={handleSubmit}>
+        <Stack spacing={3} sx={{mb:4}}>
           <TextField
             fullWidth
-            autoComplete="username"
-            type="email"
-            label="Email address"
-            {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            type="text"
+            label="TC Kimlik No"
+            {...getFieldProps('tcNo')}
+            error={Boolean(touched.tcNo && errors.tcNo)}
+            helperText={touched.tcNo && errors.tcNo}
           />
 
           <TextField
             fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
-            label="Password"
+            label="Şifre"
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -78,17 +78,6 @@ export default function LoginForm() {
             error={Boolean(touched.password && errors.password)}
             helperText={touched.password && errors.password}
           />
-        </Stack>
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
-
-          <Link component={RouterLink} variant="subtitle2" to="#">
-            Forgot password?
-          </Link>
         </Stack>
 
         <LoadingButton

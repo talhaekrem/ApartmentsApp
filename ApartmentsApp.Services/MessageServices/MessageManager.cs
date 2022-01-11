@@ -46,6 +46,7 @@ namespace ApartmentsApp.Services.MessageServices
                 //bu durumda mesaj ilk kez oluşturulmuş demektir. yani senderı işleyeceğiz.
                 if (message.ReceiverMessage == null)
                 {
+                    model.IsSenderReaded = true;
                     model.InsertDate = DateTime.Now;
                     _context.Messages.Add(model);
                     _context.SaveChanges();

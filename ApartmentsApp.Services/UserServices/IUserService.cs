@@ -14,6 +14,8 @@ namespace ApartmentsApp.Services.UserServices
         BaseModel<UserListModel> GetAll();
         //idye göre getir
         BaseModel<UserDetailsModel> GetById(int id);
+        //tcnoya göre kullanıcıyı getir. login işlemi için
+        BaseModel<UserDetailsModel> GetByTcNo(string tcNo);
         //kullanıcı kayıt ol(ekle)
         BaseModel<UserDetailsModel> Add(UserAddModel addUser);
         //kullanıcıyı güncelle
@@ -21,7 +23,7 @@ namespace ApartmentsApp.Services.UserServices
         //kullanıcıyı devre dışı bırak
         BaseModel<bool> Delete(int id);
 
-        int GetCurrentUserId(string AspNetUserId);
+        //int GetCurrentUserId(string AspNetUserId);
 
         BaseModel<UserSelectListModel> FillDropdownWithUsers(int currentUserId);
     }

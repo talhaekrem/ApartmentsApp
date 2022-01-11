@@ -71,7 +71,7 @@ function applySortFilter(array, comparator, query) {
             }else{
                 return row.ownerDisplayName.toLowerCase().indexOf(query.toLowerCase()) !== -1;
             }
-        })
+        });
     }
     return stabilizedThis.map((el) => el[0]);
 }
@@ -94,7 +94,6 @@ export default function House() {
     const [orderBy, setOrderBy] = useState('name');
     const [filterName, setFilterName] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -157,13 +156,13 @@ export default function House() {
                                 <TableBody>
                                     {filteredUsers
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row) => {
+                                        .map((row, index) => {
                                             const { id, ownerDisplayName, isActive, blockName, floorNumber, doorNumber } = row;
 
                                             return (
                                                 <TableRow
                                                     hover
-                                                    key={id}
+                                                    key={index}
                                                     tabIndex={-1}
                                                 >
                                                     <TableCell align="left">{id}</TableCell>

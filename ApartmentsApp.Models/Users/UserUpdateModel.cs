@@ -18,5 +18,6 @@ namespace ApartmentsApp.Models.Users
         public string Password { get; set; }
         public string CarPlate { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

@@ -15,7 +15,6 @@ namespace ApartmentsApp.DB.Entities
         }
 
         public int Id { get; set; }
-        public string AspNetUserId { get; set; }
         public string TcNo { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }
@@ -27,6 +26,7 @@ namespace ApartmentsApp.DB.Entities
         public DateTime InsertDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsAdmin { get; set; }
 
         public virtual ICollection<Homes> Homes { get; set; }
         public virtual ICollection<Messages> MessagesReceiver { get; set; }

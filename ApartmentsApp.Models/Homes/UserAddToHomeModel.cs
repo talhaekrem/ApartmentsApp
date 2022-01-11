@@ -10,7 +10,7 @@ namespace ApartmentsApp.Models.Homes
     {
         //eklenecek kullanıcının Idsi ve görünen adı
         public int UserId { get; set; }
-        public string? DisplayName { get; set; }
+        public string DisplayName { get; set; }
         //eklenecek evin Idsi ve kapı numarası
         public int HomeId { get; set; }
         public short? DoorNumber { get; set; }

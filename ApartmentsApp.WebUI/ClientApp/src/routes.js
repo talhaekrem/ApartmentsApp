@@ -8,7 +8,6 @@ import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
 //import Products from './pages/Products';
 import Blog from './pages/Blog';
-import User from './pages/User';
 import NotFound from './pages/Page404';
 // ----------------------------------------------------------------------
 import House from './pages/House/House';
@@ -17,10 +16,17 @@ import UpdateHouse from './pages/House/UpdateHouse';
 import DetailHouse from './pages/House/DetailHouse';
 // ----------------------------------------------------------------------
 
+
+// ----------------------------------------------------------------------
+import User from './pages/User/User';
+import AddUser from './pages/User/AddUser';
+import UpdateUser from './pages/User/UpdateUser';
+import DetailUser from './pages/User/DetailUser';
+// ----------------------------------------------------------------------
 export default function Router() {
     return useRoutes([
         {
-            //admin sayfalar�
+            //admin sayfalari
             path: '/admin',
             element: <DashboardLayout />,
             children: [
@@ -35,16 +41,16 @@ export default function Router() {
         },
         //kullanıcı sayfaları
         {
-            path: '/home',
+            path: '/dashboard',
             element: <DashboardLayout />,
             children: [
-                { element: <Navigate to="/home/index" replace /> },
+                { element: <Navigate to="/dashboard/index" replace /> },
                 { path: 'index', element: <DashboardApp /> },
                 { path: 'bills', element: <Blog /> },
                 { path: 'messages', element: <Blog /> }
             ]
         },
-        {
+        {//house sayfalari
             path: '/admin/houses',
             element: <DashboardLayout />,
             children: [
@@ -53,9 +59,18 @@ export default function Router() {
                 { path: 'detail/:houseId', element: <DetailHouse /> },
             ]
         },
-        //login register sayfalar�
+        {//user sayfalari
+            path: '/admin/users',
+            element: <DashboardLayout />,
+            children: [
+                { path: 'add', element: <AddUser /> },
+                { path: 'update/:userId', element: <UpdateUser /> },
+                { path: 'detail/:userId', element: <DetailUser /> },
+            ]
+        },
+        //login register sayfalari
         {
-            path: '/account',
+            path: '/auth',
             element: <LogoOnlyLayout />,
             children: [
                 { path: 'login', element: <Login /> },
@@ -68,8 +83,8 @@ export default function Router() {
             element: <LogoOnlyLayout />,
             children: [
                 { path: '404', element: <NotFound /> },
-                { path: '/', element: <Navigate to="/home" /> },
-                { path: '*', element: <Navigate to="/404" /> }
+                { path: '/', element: <Navigate to="/dashboard" /> },
+                //{ path: '*', element: <Navigate to="/404" /> }
             ]
         },
         { path: '*', element: <Navigate to="/404" replace /> }

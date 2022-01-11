@@ -85,6 +85,7 @@ namespace ApartmentsApp.Services.HomeServices
             var result = new BaseModel<HomeListModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
+                //left join
                 var homes = from home in _context.Homes
                             join user in _context.Users
                             on home.OwnerId equals user.Id into homeList

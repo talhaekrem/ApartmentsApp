@@ -9,7 +9,7 @@ namespace ApartmentsApp.Models.Homes
     public class HomeListModel
     {
         public int Id { get; set; }
-        public string? OwnerDisplayName { get; set; }
+        public string OwnerDisplayName { get; set; }
         public bool IsActive { get; set; }
         public string BlockName { get; set; }
         public short FloorNumber { get; set; }

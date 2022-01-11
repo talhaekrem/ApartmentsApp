@@ -234,18 +234,13 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 
             modelBuilder.Entity<Users>(entity =>
             {
-                entity.HasIndex(e => e.AspNetUserId, "UK_AspNetUserId")
+                entity.HasIndex(e => e.Email, "UK_Email")
                     .IsUnique();
 
                 entity.HasIndex(e => e.TcNo, "UK_tcNo")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AspNetUserId)
-                    .IsRequired()
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.CarPlate)
                     .HasMaxLength(50)
@@ -254,7 +249,7 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 
                 entity.Property(e => e.DisplayName)
                     .IsRequired()
-                    .HasMaxLength(75)
+                    .HasMaxLength(125)
                     .IsUnicode(false)
                     .HasColumnName("displayName");
 
@@ -269,6 +264,8 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .HasColumnName("insertDate")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.IsAdmin).HasColumnName("isAdmin");
+
                 entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
 
                 entity.Property(e => e.Name)
@@ -279,7 +276,7 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(450)
                     .IsUnicode(false)
                     .HasColumnName("password");
 
