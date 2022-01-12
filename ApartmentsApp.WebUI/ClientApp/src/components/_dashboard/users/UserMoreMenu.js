@@ -56,7 +56,7 @@ const openDialog = () => {
 const [isSuccess, setIsSuccess] = useState(false);
 const [result, setResult] = useState({});
 const DeleteSelected = () => {
-  axios.delete(`/api/Users/${props.houseId}`)
+  axios.delete(`/api/Users/${props.userId}`)
   .then(res => setResult(res.data));
   setDialog(false);
   setIsSuccess(true);

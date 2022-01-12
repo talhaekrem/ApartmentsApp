@@ -4,8 +4,20 @@ import {useParams} from 'react-router-dom';
 
 import { useFormik, Form, FormikProvider } from 'formik';
 // material
-import { Stack, TextField, Switch, Autocomplete, FormControlLabel, Alert,Button, Typography, Container } from '@mui/material';
+import { 
+    Stack, 
+    TextField, 
+    Switch, 
+    Autocomplete, 
+    FormControlLabel,
+     Alert,Button, 
+     Typography, 
+     Container,
+     InputAdornment,
+     Box } from '@mui/material';
 import axios from 'axios';
+import { Icon } from '@iconify/react';
+import searchFill from '@iconify/icons-eva/search-fill';
 import Page from '../../components/Page';
 
 export default function UpdateHouse() {
@@ -21,8 +33,8 @@ export default function UpdateHouse() {
         .then(res => setCurrentHouse(res.data.entity))
         .catch(err => console.error(err));
 
-        axios("/api/Users")
-        .then((res) => setUsers(res.data));
+        axios("/api/Users/PopulateList")
+            .then((res) => setUsers(res.data))
     }, [houseId]);
     if (users.entityList == null) {
         users.entityList = []
@@ -124,13 +136,48 @@ export default function UpdateHouse() {
                             control={<Switch {...getFieldProps('IsOwned')} checked={values.IsOwned} />}
                             label="Evin sahibi var mı?"
                         />
-                        <Autocomplete
-                            disabled={!values.IsOwned}
-                            disablePortal
-                            options={users.entityList}
-                            sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="Evin Sahibi" variant="standard" />}
-                        />
+                                    <Autocomplete
+                                        name="OwnerId"
+                                        onChange={(event, data) => {values.OwnerId =data?.id}}
+                                        sx={{width:300}}
+                                        disabled={!values.IsOwned}
+                                        popupIcon={null}
+                                        getOptionLabel={(user) => user.displayName}
+                                        options={users.entityList}
+                                        renderOption={(props,option) =>{
+                                            return(
+                                                <li {...props} key={option.id}>
+                                                    {option.displayName}
+                                                </li>
+                                            );
+                                        }}
+                                        renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            placeholder="Kullanıcı seç..."
+                                            InputProps={{
+                                            ...params.InputProps,
+                                            startAdornment: (
+                                                <>
+                                                <InputAdornment position="start">
+                                                    <Box
+                                                    component={Icon}
+                                                    icon={searchFill}
+                                                    sx={{
+                                                        ml: 1,
+                                                        width: 20,
+                                                        height: 20,
+                                                        color: 'text.disabled'
+                                                    }}
+                                                    />
+                                                </InputAdornment>
+                                                {params.InputProps.startAdornment}
+                                                </>
+                                            )
+                                            }}
+                                        />
+                                        )}
+                                    />
                     </Stack>
 
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>

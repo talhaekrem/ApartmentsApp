@@ -1,4 +1,5 @@
-﻿using ApartmentsApp.Core.Users;
+﻿using ApartmentsApp.BackgroundJobs.MailSender;
+using ApartmentsApp.Core.Users;
 using ApartmentsApp.Models;
 using ApartmentsApp.Models.Users;
 using ApartmentsApp.Services.UserServices;
@@ -40,6 +41,7 @@ namespace ApartmentsApp.WebUI.Controllers
         }
 
         [HttpPost]
+        [Obsolete]
         public BaseModel<UserDetailsModel> Insert([FromBody] UserAddModel newUser)
         {
             BaseModel<UserDetailsModel> response = new();
@@ -48,9 +50,16 @@ namespace ApartmentsApp.WebUI.Controllers
             newUser.CarPlate = newUser.CarPlate == "" ? null : newUser.CarPlate;
             newUser.DisplayName = string.Format("{0} {1}", newUser.Name, newUser.SurName);
             //random şifre oluştur ve şifrele. Bu şifreyen adminin asla haberi olmayacak
-            var generatedPassword = UserHelpers.GenerateRandomPassword();
+            string generatedPassword = UserHelpers.GenerateRandomPassword();
+
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
             response = _userService.Add(newUser);
+            if (response.isSuccess)
+            {
+                //hangfire:random password oluşturulunca bunu kullanıcıya mail olarak iletiyorum daha sonra şifreleyip veritabanına kaydediyorum
+                SendPasswordJob.SendUsersPassword(newUser.Email, newUser.DisplayName, generatedPassword);
+                //hangfire
+            }
             return response;
         }
 

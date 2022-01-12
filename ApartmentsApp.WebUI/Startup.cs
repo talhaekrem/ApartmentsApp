@@ -17,6 +17,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading.Tasks;
+using Hangfire;
+using TalhaMarket.Service.MailSender;
 
 namespace ApartmentsApp.WebUI
 {
@@ -83,7 +85,10 @@ namespace ApartmentsApp.WebUI
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<JwtService>();
 
-
+            services.AddScoped<IMailService, MailManager>();
+            //hangfire kurulumu için gerekli veritabanı bağlantılarını yapıyorum. ayrı bir databasede de tutulabilir.
+            services.AddHangfire(x => x.UseSqlServerStorage("Server=TALHAEKREM;Database=ApartmentsDB;Trusted_Connection=True;MultipleActiveResultSets=true"));
+            services.AddHangfireServer();
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
@@ -132,6 +137,9 @@ namespace ApartmentsApp.WebUI
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
+            //hangfire arayüzü. /hangfire ile giriş yapabilirsiniz.
+            //app.UseHangfireDashboard();
         }
     }
 }

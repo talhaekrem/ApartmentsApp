@@ -42,9 +42,17 @@ namespace ApartmentsApp.Services.UserServices
             using (var _context = new ApartmentsAppContext())
             {
                 var user = _context.Users.FirstOrDefault(u => u.Id == id);
-                user.IsDeleted = false;
-                _context.SaveChanges();
-                result.isSuccess = true;
+                if (_context.Homes.Any(h => h.OwnerId == id))
+                {
+                    result.exeptionMessage = "Bu kullanıcıya ait ev bulunmaktadır. Önce evden çıkışını yapın daha sonra silin";
+                }
+                else
+                {
+                    user.IsDeleted = true;
+                    _context.SaveChanges();
+                    result.isSuccess = true;
+                }
+
             }
             if (!result.isSuccess)
             {
@@ -162,7 +170,7 @@ namespace ApartmentsApp.Services.UserServices
             {
                 var user = _context.Users.FirstOrDefault(h => h.Id == updateUser.Id);
                 //eski veri sıfırlanmasın diye güncel veriyi tekrar işliyorum. çünkü mapledikten sonra model.insertDate alakasız bir tarih oluyor.
-                model.InsertDate  = user.InsertDate;
+                model.InsertDate = user.InsertDate;
                 model.UpdateDate = DateTime.Now;
                 model.Password = user.Password;
                 _context.Entry(user).CurrentValues.SetValues(model);

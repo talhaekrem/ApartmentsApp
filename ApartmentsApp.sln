@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApartmentsApp.Models", "Apa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApartmentsApp.Core", "ApartmentsApp.Core\ApartmentsApp.Core.csproj", "{7F700DCA-666F-4155-9883-20A9579EE888}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApartmentsApp.WebUI", "ApartmentsApp.WebUI\ApartmentsApp.WebUI.csproj", "{88B7C1E9-610B-4FF7-8826-BB49E04F1760}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApartmentsApp.WebUI", "ApartmentsApp.WebUI\ApartmentsApp.WebUI.csproj", "{88B7C1E9-610B-4FF7-8826-BB49E04F1760}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApartmentsApp.BackgroundJobs", "ApartmentsApp.BackgroundJobs\ApartmentsApp.BackgroundJobs.csproj", "{3C7F8CA7-4D1F-400E-BB44-52F3B798C46C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88B7C1E9-610B-4FF7-8826-BB49E04F1760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C7F8CA7-4D1F-400E-BB44-52F3B798C46C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C7F8CA7-4D1F-400E-BB44-52F3B798C46C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C7F8CA7-4D1F-400E-BB44-52F3B798C46C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C7F8CA7-4D1F-400E-BB44-52F3B798C46C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

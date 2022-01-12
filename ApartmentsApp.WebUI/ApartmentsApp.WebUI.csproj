@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApartmentsApp.BackgroundJobs\ApartmentsApp.BackgroundJobs.csproj" />
     <ProjectReference Include="..\ApartmentsApp.Services\ApartmentsApp.Services.csproj" />
   </ItemGroup>
 
