@@ -44,7 +44,12 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(false);
   };
-
+  const logout = async () => {
+    await fetch("/account/logout",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"}
+    })
+  }
   return (
     <>
       <IconButton
@@ -110,7 +115,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
+          <Button to="/auth/login" component={RouterLink} fullWidth color="inherit" variant="outlined" onClick={logout}>
             Logout
           </Button>
         </Box>

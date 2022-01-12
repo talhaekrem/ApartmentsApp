@@ -5,12 +5,12 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Box, Drawer} from '@mui/material';
 // components
-import Logo from '../../components/Logo';
-import Scrollbar from '../../components/Scrollbar';
-import NavSection from '../../components/NavSection';
-import { MHidden } from '../../components/@material-extend';
+import Logo from '../../../components/Logo';
+import Scrollbar from '../../../components/Scrollbar';
+import NavSection from '../../../components/NavSection';
+import { MHidden } from '../../../components/@material-extend';
 //
-import sidebarConfig from './SidebarConfig';
+import UserSidebarConfig from './UserSidebarConfig';
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Box>
       </Box>
 
-      <NavSection navConfig={sidebarConfig} />
+      <NavSection navConfig={UserSidebarConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

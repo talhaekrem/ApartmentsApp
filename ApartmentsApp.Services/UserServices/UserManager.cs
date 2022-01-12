@@ -54,18 +54,17 @@ namespace ApartmentsApp.Services.UserServices
         }
 
         //mevcut kullanıcının idsini almamın sebebi: listede kendisi de gelmesin diye
-        public BaseModel<UserSelectListModel> FillDropdownWithUsers(int currentUserId)
+        public BaseModel<UserSelectListModel> FillDropdownWithUsers()
         {
             var result = new BaseModel<UserSelectListModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
                 var query = from user in _context.Users
-                            where user.IsDeleted == false && user.Id != currentUserId
+                            where user.IsDeleted == false && !user.IsAdmin
                             select new UserSelectListModel()
                             {
                                 Id = user.Id,
-                                Name = user.Name,
-                                SurName = user.SurName
+                                DisplayName = user.DisplayName
                             };
                 if (query.Any())
                 {
@@ -92,6 +91,7 @@ namespace ApartmentsApp.Services.UserServices
                             from homes in userList.DefaultIfEmpty()
                             select new UserListModel()
                             {
+                                Id = user.Id,
                                 Name = user.Name,
                                 SurName = user.SurName,
                                 TcNo = user.TcNo,
@@ -154,19 +154,6 @@ namespace ApartmentsApp.Services.UserServices
             return result;
         }
 
-        // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //arayüz tarafında asp net identity ile login olmuş kullanıcının ClaimTypelarından NameIdentifier özelliğiyle aspNetUserIdsini alabiliyoruz
-        //Bu id ile kendi Users tablomuzdaki userı alıyoruz. Çünkü kullanacağımız veriler hep kendi User tablomuzda.
-        // Bu sebepten hangi kullanıcı login olmuş ve işlem yaptığını bu methodla öğreneceğiz.
-        //public int GetCurrentUserId(string AspNetUserId)
-        //{
-        //    using (var _context = new ApartmentsAppContext())
-        //    {
-        //        int userId = _context.Users.FirstOrDefault(u => u.AspNetUserId == AspNetUserId).Id;
-        //        return userId;
-        //    }
-        //}
-
         public BaseModel<UserDetailsModel> Update(UserUpdateModel updateUser)
         {
             var result = new BaseModel<UserDetailsModel>() { isSuccess = false };
@@ -177,6 +164,7 @@ namespace ApartmentsApp.Services.UserServices
                 //eski veri sıfırlanmasın diye güncel veriyi tekrar işliyorum. çünkü mapledikten sonra model.insertDate alakasız bir tarih oluyor.
                 model.InsertDate  = user.InsertDate;
                 model.UpdateDate = DateTime.Now;
+                model.Password = user.Password;
                 _context.Entry(user).CurrentValues.SetValues(model);
                 _context.SaveChanges();
                 result.isSuccess = true;

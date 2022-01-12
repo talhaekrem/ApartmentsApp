@@ -8,6 +8,7 @@ namespace ApartmentsApp.Models.Users
 {
     public class UserListModel
     {
+        public int Id {get; set; }
         public string TcNo { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }

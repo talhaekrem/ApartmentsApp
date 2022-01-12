@@ -56,7 +56,7 @@ namespace ApartmentsApp.WebUI
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateAudience = false
                 };
                 x.Events = new JwtBearerEvents
                 {

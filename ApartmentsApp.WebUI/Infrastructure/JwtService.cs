@@ -36,35 +36,21 @@ namespace ApartmentsApp.WebUI.Infrastructure
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var writedToken = tokenHandler.WriteToken(token);
             return writedToken;
-            //rol veriyorum
-            //var claims = new[]
-            //{
-            //    new Claim(ClaimTypes.Role, isAdmin?"Admin":"User"),
-            //    new Claim(ClaimTypes.Name,id.ToString())
-            //};
-
-            //var symmetricSKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
-            //var credentials = new SigningCredentials(symmetricSKey, SecurityAlgorithms.HmacSha256Signature);
-            //var header = new JwtHeader(credentials);
-
-            //var payload = new JwtPayload(id.ToString(), null, null, null, DateTime.Today.AddDays(1));
-            //var token = new JwtSecurityToken(header, payload);
-            //return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        //public JwtSecurityToken Verify(string jwt)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.ASCII.GetBytes(_configuration["Token:SecurityKey"]);
-        //    tokenHandler.ValidateToken(jwt, new TokenValidationParameters
-        //    {
-        //        IssuerSigningKey = new SymmetricSecurityKey(key),
-        //        ValidateIssuerSigningKey = true,
-        //        ValidateIssuer = false,
-        //        ValidateAudience = false,
-        //    }, out SecurityToken validatedToken);
+        public JwtSecurityToken Verify(string jwt)
+        {
+           var tokenHandler = new JwtSecurityTokenHandler();
+           var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+           tokenHandler.ValidateToken(jwt, new TokenValidationParameters
+           {
+               ValidateIssuerSigningKey = true,
+               IssuerSigningKey = new SymmetricSecurityKey(key),
+               ValidateIssuer = false,
+               ValidateAudience = false,
+           }, out SecurityToken validatedToken);
 
-        //    return (JwtSecurityToken)validatedToken;
-        //}
+           return (JwtSecurityToken)validatedToken;
+        }
     }
 }

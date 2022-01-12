@@ -14,6 +14,7 @@ namespace ApartmentsApp.WebUI.Controllers
 {
     [Route("api/[controller]s")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class HouseController : ControllerBase
     {
         private readonly IHomeService _homeService;
@@ -24,7 +25,6 @@ namespace ApartmentsApp.WebUI.Controllers
 
         //tüm evleri getir
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public BaseModel<HomeListModel> GetAll()
         {
             BaseModel<HomeListModel> response = new();

@@ -2,6 +2,7 @@
 using ApartmentsApp.Models;
 using ApartmentsApp.Models.Users;
 using ApartmentsApp.Services.UserServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,6 +14,7 @@ namespace ApartmentsApp.WebUI.Controllers
 {
     [Route("api/[controller]s")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -22,7 +24,8 @@ namespace ApartmentsApp.WebUI.Controllers
         }
 
         [HttpGet]
-        public BaseModel<UserListModel> GetAll(){
+        public BaseModel<UserListModel> GetAll()
+        {
             BaseModel<UserListModel> response = new();
             response = _userService.GetAll();
             return response;
@@ -43,7 +46,7 @@ namespace ApartmentsApp.WebUI.Controllers
             //formdan tcno,ad,soyad,telefon,eposta,rol,plaka bilgilerini aldık
             //id otomatik oluşuyor. display namei burada setledik random şifre generate ettik, insert date ise servis kısmında giriliyor.
             newUser.CarPlate = newUser.CarPlate == "" ? null : newUser.CarPlate;
-            newUser.DisplayName = string.Format("{0} {1}",newUser.Name,newUser.SurName);
+            newUser.DisplayName = string.Format("{0} {1}", newUser.Name, newUser.SurName);
             //random şifre oluştur ve şifrele. Bu şifreyen adminin asla haberi olmayacak
             var generatedPassword = UserHelpers.GenerateRandomPassword();
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(generatedPassword);
@@ -55,6 +58,7 @@ namespace ApartmentsApp.WebUI.Controllers
         public BaseModel<UserDetailsModel> Update([FromBody] UserUpdateModel updateUser)
         {
             BaseModel<UserDetailsModel> response = new();
+            updateUser.CarPlate = updateUser.CarPlate == "" ? null : updateUser.CarPlate;
             response = _userService.Update(updateUser);
             return response;
         }
@@ -71,9 +75,8 @@ namespace ApartmentsApp.WebUI.Controllers
         [Route("PopulateList")]
         public BaseModel<UserSelectListModel> PopulateUserDropdown()
         {
-            int id = 5;//bu kısım servislerle alınacak current user idsi olacak
             BaseModel<UserSelectListModel> response = new();
-            response = _userService.FillDropdownWithUsers(id);
+            response = _userService.FillDropdownWithUsers();
             return response;
         }
     }
