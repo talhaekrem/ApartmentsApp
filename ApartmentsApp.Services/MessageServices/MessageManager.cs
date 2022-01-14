@@ -17,16 +17,42 @@ namespace ApartmentsApp.Services.MessageServices
         {
             _mapper = mapper;
         }
+
+        public BaseModel<MessageDetailModel> GetById(int messageId)
+        {
+            var result = new BaseModel<MessageDetailModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                var message = _context.Messages.FirstOrDefault(m => m.Id == messageId);
+
+                if (message is not null)
+                {
+                    result.entity = _mapper.Map<MessageDetailModel>(message);
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Girdiğiniz idye ait ev mesaj bulunmamaktadır.";
+                }
+            }
+            return result;
+        }
+
         public BaseModel<MessageListModel> ListMyMessages(int MyId)
         {
             var result = new BaseModel<MessageListModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
                 var messages = _context.Messages.Where(m => m.ReceiverId == MyId || m.SenderId == MyId);
-
                 if (messages.Any())
                 {
-                    result.entityList = _mapper.Map<List<MessageListModel>>(messages);
+                    var list = _mapper.Map<List<MessageListModel>>(messages);
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        list[i].SenderDisplayName = _context.Users.FirstOrDefault(u => u.Id == list[i].SenderId).DisplayName;
+                        list[i].ReceiverDisplayName = _context.Users.FirstOrDefault(u => u.Id == list[i].ReceiverId).DisplayName;
+                    }
+                    result.entityList = list;
                     result.isSuccess = true;
                 }
                 else
@@ -83,6 +109,7 @@ namespace ApartmentsApp.Services.MessageServices
                 var message = _context.Messages.FirstOrDefault(m => m.Id == messageId);
                 message.IsReceiverReaded = true;
                 _context.Messages.Update(message);
+                _context.SaveChanges();
             }
         }
 
@@ -93,6 +120,7 @@ namespace ApartmentsApp.Services.MessageServices
                 var message = _context.Messages.FirstOrDefault(m => m.Id == messageId);
                 message.IsSenderReaded = true;
                 _context.Messages.Update(message);
+                _context.SaveChanges();
             }
         }
     }

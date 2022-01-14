@@ -12,6 +12,7 @@ namespace ApartmentsApp.Services.MessageServices
     {
         BaseModel<MessageListModel> ListMyMessages(int myId);
         BaseModel<MessageSendModel> SendMessage(MessageSendModel message);
+        BaseModel<MessageDetailModel> GetById(int messageId);
 
         //mesaj talebine cevap geldiğinde ve cevabı okuduğunda mesajı görmüş sayılırsın. ve mesajı alan kişiye görüldü bilgisi gidecektir.
         void SetSenderReaded(int messageId);

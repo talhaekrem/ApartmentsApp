@@ -61,6 +61,31 @@ namespace ApartmentsApp.Services.UserServices
             return result;
         }
 
+        public BaseModel<UserSelectListModel> FillDropdownWithAdmins()
+        {
+            var result = new BaseModel<UserSelectListModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                var query = from user in _context.Users
+                            where user.IsDeleted == false && user.IsAdmin
+                            select new UserSelectListModel()
+                            {
+                                Id = user.Id,
+                                DisplayName = user.DisplayName
+                            };
+                if (query.Any())
+                {
+                    result.entityList = query.ToList();
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Kullanıcı bulunmadı.";
+                }
+            }
+            return result;
+        }
+
         //mevcut kullanıcının idsini almamın sebebi: listede kendisi de gelmesin diye
         public BaseModel<UserSelectListModel> FillDropdownWithUsers()
         {

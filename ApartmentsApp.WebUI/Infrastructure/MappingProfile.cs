@@ -30,7 +30,7 @@ namespace ApartmentsApp.WebUI.Infrastructure
             CreateMap<Messages, MessageListModel>();
             CreateMap<MessageSendModel, Messages>();
             CreateMap<Messages, MessageSendModel>();
-
+            CreateMap<Messages, MessageDetailModel>();
             //custom bills aidat-kira,elektrik,su,doğalgaz
             //ekle
             CreateMap<BillsAddModel, HomeBill>();

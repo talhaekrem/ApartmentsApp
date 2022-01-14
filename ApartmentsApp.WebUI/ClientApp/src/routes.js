@@ -24,6 +24,17 @@ import AddUser from './pages/User/AddUser';
 import UpdateUser from './pages/User/UpdateUser';
 import DetailUser from './pages/User/DetailUser';
 // ----------------------------------------------------------------------
+import Message from './pages/Message/Message';
+import AddMessage from './pages/Message/AddMessage';
+import DetailMessage from './pages/Message/DetailMessage';
+// ----------------------------------------------------------------------
+import BillAdmin from './pages/BillAdmin/BillAdmin';
+import AddBillAdmin from './pages/BillAdmin/AddBillAdmin';
+import DetailBillAdmin from './pages/BillAdmin/DetailBillAdmin';
+//import UpdateBillAdmin from './pages/BillAdmin/UpdateBillAdmin';
+
+// ----------------------------------------------------------------------
+
 export default function Router() {
     return useRoutes([
         {
@@ -35,12 +46,12 @@ export default function Router() {
                 { path: 'index', element: <DashboardApp /> },
                 { path: 'users', element: <User /> },
                 { path: 'houses', element: <House /> },
-                { path: 'bills', element: <Blog /> },
-                { path: 'messages', element: <Blog /> },
+                { path: 'bills', element: <BillAdmin /> },
+                { path: 'messages', element: <Message /> },
 
             ]
         },
-        {//house sayfalari
+        {//ev sayfaları
             path: '/admin/houses',
             element: <AdminDashboardLayout />,
             children: [
@@ -49,13 +60,30 @@ export default function Router() {
                 { path: 'detail/:houseId', element: <DetailHouse /> },
             ]
         },
-        {//user sayfalari
+        {//fatura sayfaları
+            path: '/admin/bills',
+            element: <AdminDashboardLayout />,
+            children: [
+                { path: 'add', element: <AddBillAdmin /> },
+                // { path: 'update/:billId', element: <UpdateBillAdmin /> },
+                { path: ':type/:billId', element: <DetailBillAdmin /> },
+            ]
+        },
+        {//user sayfaları
             path: '/admin/users',
             element: <AdminDashboardLayout />,
             children: [
                 { path: 'add', element: <AddUser /> },
                 { path: 'update/:userId', element: <UpdateUser /> },
                 { path: 'detail/:userId', element: <DetailUser /> },
+            ]
+        },
+        {//mesaj sayfaları
+            path: '/admin/messages',
+            element: <AdminDashboardLayout />,
+            children: [
+                { path: 'add', element: <AddMessage /> },
+                { path: 'detail/:messageId', element: <DetailMessage /> },
             ]
         },
         //kullanıcı sayfaları
@@ -66,7 +94,15 @@ export default function Router() {
                 { element: <Navigate to="/dashboard/index" replace /> },
                 { path: 'index', element: <UserDashboard /> },
                 { path: 'bills', element: <Blog /> },
-                { path: 'messages', element: <Blog /> }
+                { path: 'messages', element: <Message /> }
+            ]
+        },
+        {//mesaj sayfaları
+            path: '/dashboard/messages',
+            element: <UserDashboardLayout />,
+            children: [
+                { path: 'add', element: <AddMessage /> },
+                { path: 'detail/:messageId', element: <DetailMessage /> },
             ]
         },
         //login register sayfalari

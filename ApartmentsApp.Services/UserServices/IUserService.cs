@@ -26,5 +26,7 @@ namespace ApartmentsApp.Services.UserServices
         //int GetCurrentUserId(string AspNetUserId);
 
         BaseModel<UserSelectListModel> FillDropdownWithUsers();
+        BaseModel<UserSelectListModel> FillDropdownWithAdmins();
+
     }
 }

@@ -37,13 +37,13 @@ namespace TalhaMarket.Service.MailSender
             message.Body = new TextPart("html")
             {
                 Text = String.Format(
-@"<h1>Hoş Geldin {0}</h1>
-<h2>Sizi burada görmekten dolayı çok mutluyuz.</h2>
+@"<h1>Hoş Geldiniz {0}</h1>
+<h2>Sizi burada görmekten dolayı çok mutluyuz</h2>
 <hr>
 <h4>Bu platformda sitendeki ortak kullanım faturalarını ve aidatlarını kolayca ödeyebilirsin</h4>
  <p>Hesabın, yönetici tarafından sisteme başarıyla kaydedilmiştir</p>
 <hr>
-<h4>Sisteme girişte kullanacpınız parola otomatik olarak oluşturup şifrelenmiştir. Bu şifreyi senden başka kimse bilmiyor. Lütfen şifrenizi kimseyle paylaşmayın</h4>
+<h4>Sisteme girişte kullanacağınız parola otomatik olarak oluşturulup şifrelenmiştir. Bu şifreyi senden başka kimse bilmiyor. Lütfen şifrenizi kimseyle paylaşmayın</h4>
 <p>Platforma girişte kullanacağınız şifreniz: <strong>{1}</strong></p>
 <br>--My Apartments Mail Sender With <b>Hangfire</b><hr><p>My Apartments Yönetimi</p>", displayName, notCryptedPassword)
             };

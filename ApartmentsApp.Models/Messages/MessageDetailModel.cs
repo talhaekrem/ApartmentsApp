@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ApartmentsApp.Models.Messages
 {
-    public class MessageListModel
+    public class MessageDetailModel
     {
         public int Id { get; set; }
         public int SenderId { get; set; }
@@ -14,9 +14,9 @@ namespace ApartmentsApp.Models.Messages
         public bool IsSenderReaded { get; set; }
         public bool IsReceiverReaded { get; set; }
         public string MessageTitle { get; set; }
+        public string SenderMessage { get; set; }
+        public string ReceiverMessage { get; set; }
         public DateTime InsertDate { get; set; }
-
-        public string SenderDisplayName { get; set; }
-        public string ReceiverDisplayName { get; set; }
+        public DateTime? UpdateDate { get; set; }
     }
 }

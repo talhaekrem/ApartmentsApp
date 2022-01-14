@@ -22,24 +22,84 @@ namespace ApartmentsApp.Services.BillServices
                 yoksa patates de diyebiliriz. "|" veya yapmamın sebebi mesela henüz doğalgaz faturası girilmemişse doğalgaz tablosunda
                 BillsId olmayacak ve hata verecektir. 
                  */
-                var query = from home in _context.HomeBill
-                            from water in _context.WaterBill
-                            from electric in _context.ElectricBill
-                            from gas in _context.GasBill
-                            join bills in _context.Bills
-                            on home.BillsId | water.BillsId | electric.BillsId | gas.BillsId equals bills.Id
-                            select new BillsListAdminModel()
-                            {
-                                Id = bills.Id,
-                                HomeId = bills.HomeId,
-                                IsHomeBillPaid = home.IsPaid,
-                                IsElectricBillPaid = electric.IsPaid,
-                                IsWaterBillPaid = water.IsPaid,
-                                IsGasBillPaid = gas.IsPaid
-                            };
-                if (query.Any())
+                //var newq = from bills in _context.Bills
+                //           join  home in _context.HomeBill
+                List<BillsListAdminModel> model = new();
+                for (int i = 0; i < _context.Bills.Count(); i++)
                 {
-                    result.entityList = query.ToList();
+                    var currentBill = _context.Bills.Skip(i).Take(1).FirstOrDefault();
+                    var dues = _context.HomeBill.FirstOrDefault(d => d.BillsId == currentBill.Id);
+                    var electric = _context.ElectricBill.FirstOrDefault(d => d.BillsId == currentBill.Id);
+                    var water = _context.WaterBill.FirstOrDefault(d => d.BillsId == currentBill.Id);
+                    var gas = _context.GasBill.FirstOrDefault(d => d.BillsId == currentBill.Id);
+
+                    bool IsHomeBillPaid = false;
+                    bool HomeBillActive = false;
+                    bool IsElectricBillPaid = false;
+                    bool ElectricBillActive = false;
+                    bool IsWaterBillPaid = false;
+                    bool WaterBillActive = false;
+                    bool IsGasBillPaid = false;
+                    bool GasBillActive = false;
+
+                    if (dues != null)
+                    {
+                        IsHomeBillPaid = dues.IsPaid;
+                        HomeBillActive = true;
+                    }
+                    if (electric != null)
+                    {
+                        IsElectricBillPaid = electric.IsPaid;
+                        ElectricBillActive = true;
+                    }
+                    if (water != null)
+                    {
+                        IsWaterBillPaid = water.IsPaid;
+                        WaterBillActive = true;
+                    }
+                    if (gas != null)
+                    {
+                        IsGasBillPaid = gas.IsPaid;
+                        GasBillActive = true;
+                    }
+
+                    model.Add(new BillsListAdminModel()
+                    {
+                        Id = currentBill.Id,
+                        HomeId = currentBill.HomeId,
+                        IsHomeBillPaid = IsHomeBillPaid,
+                        HomeBillActive = HomeBillActive,
+                        IsElectricBillPaid = IsElectricBillPaid,
+                        ElectricBillActive = ElectricBillActive,
+                        IsWaterBillPaid = IsWaterBillPaid,
+                        WaterBillActive = WaterBillActive,
+                        IsGasBillPaid = IsGasBillPaid,
+                        GasBillActive = GasBillActive
+                    });
+
+                };
+                //var query = from home in _context.HomeBill
+                //            from water in _context.WaterBill
+                //            from electric in _context.ElectricBill
+                //            from gas in _context.GasBill
+                //            join bills in _context.Bills
+                //            on home.BillsId | water.BillsId | electric.BillsId | gas.BillsId equals bills.Id
+                //            select new BillsListAdminModel()
+                //            {
+                //                Id = bills.Id,
+                //                HomeId = bills.HomeId,
+                //                IsHomeBillPaid = home.IsPaid,
+                //                HomeBillActive = home.Price != 0 ? true : false,
+                //                IsElectricBillPaid = electric.IsPaid,
+                //                ElectricBillActive = electric.Price != 0 ? true : false,
+                //                IsWaterBillPaid = water.IsPaid,
+                //                WaterBillActive = water.Price != 0 ? true : false,
+                //                IsGasBillPaid = gas.IsPaid,
+                //                GasBillActive = gas.Price != 0 ? true : false,
+                //            };
+                if (model.Any())
+                {
+                    result.entityList = model;
                     result.isSuccess = true;
                 }
                 else

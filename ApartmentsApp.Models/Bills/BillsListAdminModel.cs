@@ -13,17 +13,18 @@ namespace ApartmentsApp.Models.Bills
         public int Id { get; set; }
         public int HomeId { get; set; }
 
-        //ayrıyetten her fatura tipinin ödenip ödenmediği bilgisini alıyorum. 
-        //eğer null hatası alırsak hepsini nullable yap. boolda null geliyor mu ondan da emin değilim.
+        //ayrıyetten her fatura tipinin ödenip ödenmediği veya fatura kesildi mi bilgisini alıyorum. 
         public bool IsHomeBillPaid { get; set; }
+        public bool HomeBillActive { get; set; }
+
         public bool IsElectricBillPaid { get; set; }
+        public bool ElectricBillActive { get; set; }
+
         public bool IsWaterBillPaid { get; set; }
+        public bool WaterBillActive { get; set; }
+
         public bool IsGasBillPaid { get; set; }
-        /*
-         
-         Employee kaynak(src), EmployeeDto hedef(dest)
-         Mapper.CreateMap<Employee, EmployeeDto>()
-    .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Name));
-         */
+        public bool GasBillActive { get; set; }
+
     }
 }

@@ -67,5 +67,14 @@ namespace ApartmentsApp.WebUI.Controllers
             response = _homeService.SetHomeEmpty(id);
             return response;
         }
+
+        [HttpGet]
+        [Route("GetBillableHomes")]
+        public BaseModel<HomeSelectListModel> GetBillableHomes()
+        {
+            BaseModel<HomeSelectListModel> response = new();
+            response = _homeService.GetBillableHomes();
+            return response;
+        }
     }
 }

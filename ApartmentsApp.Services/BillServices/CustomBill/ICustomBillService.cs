@@ -13,6 +13,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
     {
         BaseModel<BillsDetailsModel> GetBillDetails(int id, BillType type);
         BaseModel<BillsDetailsModel> AddBill(BillsAddModel addBill, BillType type);
+        BaseModel<BillsDetailsModel> InsertOneBill(BillsAddModel addBill, BillType type, int MainBillId);
         BaseModel<BillsDetailsModel> UpdateBill(BillsUpdateModel updateBill, BillType type);
         BaseModel<bool> DeleteBill(int id, BillType type);
     }

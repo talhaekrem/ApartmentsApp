@@ -1,0 +1,8 @@
+[
+  {
+    "outputFileName": "ClientApp/src/pages/User/UpdateUser.min.js",
+    "inputFiles": [
+      "ClientApp/src/pages/User/UpdateUser.js"
+    ]
+  }
+]

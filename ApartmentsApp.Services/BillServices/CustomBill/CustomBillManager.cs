@@ -28,55 +28,130 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             using (var _context = new ApartmentsAppContext())
             {
                 //bu daireye ait son faturanın idsini al. pkdır kendini tekrar etmez
-                int lastBillId = _context.Bills.LastOrDefault(b => b.HomeId == addBill.HomeId).Id;
-
-                //bu kısım daha önceden bir fatura eklenmemiş ve ilk defa fatura ekliyor demek.
-                //eğer son faturanın üzerinden 30 gün geçmiş mi geçmemiş mi kontrolünü de yapıyoruz.
-                //ilk önce ana bill tablosunda satır oluştururuz.
-                if (addBill.BillsId == null)
+                int lastBillId = 0;
+                var lastBill = _context.Bills.OrderBy(s => s.Id).LastOrDefault(b => b.HomeId == addBill.HomeId);
+                if (lastBill != null)
                 {
-                    if (CanTakeBill(lastBillId, type))
-                    {
-                        var newBill = new ApartmentsApp.DB.Entities.Bills();
-                        newBill.HomeId = addBill.HomeId;
-                        var addedMainBill = _context.Bills.Add(newBill);
-                        _context.SaveChanges();
-                        addBill.BillsId = addedMainBill.Entity.Id;
-                    }
-                    else
-                    {
-                        result.exeptionMessage = $"Son {BillHelpers.GetEnumDisplayName(type)} faturasının üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz.";
-                    }
-
+                    lastBillId = lastBill.Id;
                 }
-                else if (CanTakeBill(lastBillId, type))
+                //bu kısım daha önceden bir fatura eklenmemiş ve ilk defa fatura ekliyor demek.
+                //son faturanın üzerinden 30 gün geçmiş mi geçmemiş mi kontrolünü de yapıyoruz.
+                //ilk önce ana bill tablosunda satır oluşturuyoruz.
+
+                if (CanTakeBill(lastBillId, type))
                 {
-                    var model = (dynamic)null;
+                    var newBill = new ApartmentsApp.DB.Entities.Bills();
+                    newBill.HomeId = addBill.HomeId;
+                    _context.Bills.Add(newBill);
+                    _context.SaveChanges();
+                    addBill.BillsId = newBill.Id;
+
                     switch (type)
                     {
                         case BillType.Home:
-                            model = _mapper.Map<ApartmentsApp.DB.Entities.HomeBill>(addBill);
-                            _context.HomeBill.Add(model);
+                            var home = _mapper.Map<ApartmentsApp.DB.Entities.HomeBill>(addBill);
+                            _context.HomeBill.Add(home);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(home);
                             break;
                         case BillType.Electric:
-                            model = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(addBill);
-                            _context.ElectricBill.Add(model);
+                            var electric = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(addBill);
+                            _context.ElectricBill.Add(electric);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(electric);
                             break;
                         case BillType.Water:
-                            model = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(addBill);
-                            _context.WaterBill.Add(model);
+                            var water = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(addBill);
+                            _context.WaterBill.Add(water);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(water);
                             break;
                         case BillType.Gas:
-                            model = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(addBill);
-                            _context.GasBill.Add(model);
+                            var gas = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(addBill);
+                            _context.GasBill.Add(gas);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(gas);
                             break;
                         default:
-                            model = null;
                             break;
                     }
-                    _context.SaveChanges();
-                    result.isSuccess = true;
-                    result.entity = _mapper.Map<BillsDetailsModel>(model);
+
+                }
+                else
+                {
+                    result.exeptionMessage = $"Son {BillHelpers.GetEnumDisplayName(type)} faturasının üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz.";
+                }
+            }
+            if (!result.isSuccess)
+            {
+                result.exeptionMessage = "Fatura eklenirken hata oluştu.";
+
+            }
+            return result;
+        }
+        #endregion
+
+        #region tek tipte fatura ekle
+        public BaseModel<BillsDetailsModel> InsertOneBill(BillsAddModel addBill, BillType type, int MainBillId)
+        {
+            var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                //bu daireye ait son faturanın idsini al. pkdır kendini tekrar etmez
+                int lastBillId = 0;
+                var lastBill = _context.Bills.OrderBy(s => s.Id).LastOrDefault(b => b.HomeId == addBill.HomeId);
+                if (lastBill != null)
+                {
+                    lastBillId = lastBill.Id;
+                }
+                //bu kısım daha önceden bir fatura eklenmemiş ve ilk defa fatura ekliyor demek.
+                //son faturanın üzerinden 30 gün geçmiş mi geçmemiş mi kontrolünü de yapıyoruz.
+                //ilk önce ana bill tablosunda satır oluşturuyoruz.
+
+                if (CanTakeBill(lastBillId, type))
+                {
+                    switch (type)
+                    {
+                        case BillType.Home:
+                            var home = _mapper.Map<ApartmentsApp.DB.Entities.HomeBill>(addBill);
+                            home.BillsId = MainBillId;
+                            _context.HomeBill.Add(home);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(home);
+                            break;
+                        case BillType.Electric:
+                            var electric = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(addBill);
+                            electric.BillsId = MainBillId;
+                            _context.ElectricBill.Add(electric);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(electric);
+                            break;
+                        case BillType.Water:
+                            var water = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(addBill);
+                            water.BillsId = MainBillId;
+                            _context.WaterBill.Add(water);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(water);
+                            break;
+                        case BillType.Gas:
+                            var gas = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(addBill);
+                            gas.BillsId = MainBillId;
+                            _context.GasBill.Add(gas);
+                            _context.SaveChanges();
+                            result.isSuccess = true;
+                            result.entity = _mapper.Map<BillsDetailsModel>(gas);
+                            break;
+                        default:
+                            break;
+                    }
+
                 }
                 else
                 {
@@ -98,35 +173,38 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             var result = new BaseModel<bool>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                var model = (dynamic)null;
+
                 switch (type)
                 {
                     case BillType.Home:
-                        model = _context.HomeBill.FirstOrDefault(h => h.Id == id);
-                        _context.HomeBill.Remove(model);
+                        var dues = _context.HomeBill.FirstOrDefault(h => h.BillsId == id);
+                        _context.HomeBill.Remove(dues);
+                        _context.SaveChanges();
+                        result.isSuccess = true;
                         break;
                     case BillType.Electric:
-                        model = _context.ElectricBill.FirstOrDefault(e => e.Id == id);
-                        _context.ElectricBill.Remove(model);
+                        var electric = _context.ElectricBill.FirstOrDefault(e => e.BillsId == id);
+                        _context.ElectricBill.Remove(electric);
+                        _context.SaveChanges();
+                        result.isSuccess = true;
                         break;
                     case BillType.Water:
-                        model = _context.WaterBill.FirstOrDefault(w => w.Id == id);
-                        _context.WaterBill.Remove(model);
+                        var water = _context.WaterBill.FirstOrDefault(w => w.BillsId == id);
+                        _context.WaterBill.Remove(water);
+                        _context.SaveChanges();
+                        result.isSuccess = true;
                         break;
                     case BillType.Gas:
-                        model = _context.GasBill.FirstOrDefault(g => g.Id == id);
-                        _context.GasBill.Remove(model);
+                        var gas = _context.GasBill.FirstOrDefault(g => g.BillsId == id);
+                        _context.GasBill.Remove(gas);
+                        _context.SaveChanges();
+                        result.isSuccess = true;
                         break;
                     default:
-                        model = null;
+                        result.exeptionMessage = "Fatura silinirken hata oluştu.";
                         break;
                 }
-                _context.SaveChanges();
-                result.isSuccess = true;
-            }
-            if (!result.isSuccess)
-            {
-                result.exeptionMessage = "Fatura silinirken hata oluştu.";
+
             }
             return result;
         }
@@ -138,37 +216,34 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                var query = (dynamic)null;
-                //veya
-                //dynamic query = null;
                 switch (type)
                 {
                     case BillType.Home:
-                        query = _context.HomeBill.FirstOrDefault(h => h.Id == id);
+                        var dues = _context.HomeBill.FirstOrDefault(h => h.BillsId == id);
+                        result.entity = _mapper.Map<BillsDetailsModel>(dues);
+                        result.isSuccess = true;
                         break;
                     case BillType.Electric:
-                        query = _context.ElectricBill.FirstOrDefault(e => e.Id == id);
+                        var electric = _context.ElectricBill.FirstOrDefault(e => e.BillsId == id);
+                        result.entity = _mapper.Map<BillsDetailsModel>(electric);
+                        result.isSuccess = true;
                         break;
                     case BillType.Water:
-                        query = _context.WaterBill.FirstOrDefault(w => w.Id == id);
+                        var water = _context.WaterBill.FirstOrDefault(w => w.BillsId == id);
+                        result.entity = _mapper.Map<BillsDetailsModel>(water);
+                        result.isSuccess = true;
                         break;
                     case BillType.Gas:
-                        query = _context.GasBill.FirstOrDefault(g => g.Id == id);
+                        var gas = _context.GasBill.FirstOrDefault(g => g.BillsId == id);
+                        result.entity = _mapper.Map<BillsDetailsModel>(gas);
+                        result.isSuccess = true;
                         break;
                     default:
-                        query = null;
+                        result.exeptionMessage = "Fatura tipi hatalıdır";
                         break;
                 }
 
-                if (query is not null)
-                {
-                    result.entity = _mapper.Map<BillsDetailsModel>(query);
-                    result.isSuccess = true;
-                }
-                else
-                {
-                    result.exeptionMessage = "Fatura tipi hatalıdır";
-                }
+
             }
             return result;
         }
@@ -180,43 +255,41 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                var model = (dynamic)null;
                 switch (type)
                 {
                     case BillType.Home:
-                        model = _mapper.Map<ApartmentsApp.DB.Entities.HomeBill>(updateBill);
+                        var duesModel = _mapper.Map<ApartmentsApp.DB.Entities.HomeBill>(updateBill);
                         var home = _context.HomeBill.FirstOrDefault(h => h.Id == updateBill.Id);
-                        model.PaymentDate = home.PaymentDate;
-                        _context.Entry(home).CurrentValues.SetValues(model);
+                        duesModel.PaymentDate = home.BillDate;
+                        _context.Entry(home).CurrentValues.SetValues(duesModel);
                         _context.SaveChanges();
                         result.entity = _mapper.Map<BillsDetailsModel>(home);
                         break;
                     case BillType.Electric:
-                        model = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(updateBill);
+                        var electricModel = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(updateBill);
                         var electric = _context.ElectricBill.FirstOrDefault(h => h.Id == updateBill.Id);
-                        model.PaymentDate = electric.PaymentDate;
-                        _context.Entry(electric).CurrentValues.SetValues(model);
+                        electricModel.PaymentDate = electric.BillDate;
+                        _context.Entry(electric).CurrentValues.SetValues(electricModel);
                         _context.SaveChanges();
                         result.entity = _mapper.Map<BillsDetailsModel>(electric);
                         break;
                     case BillType.Water:
-                        model = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(updateBill);
+                        var waterModel = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(updateBill);
                         var water = _context.WaterBill.FirstOrDefault(h => h.Id == updateBill.Id);
-                        model.PaymentDate = water.PaymentDate;
-                        _context.Entry(water).CurrentValues.SetValues(model);
+                        waterModel.BillDate = water.BillDate;
+                        _context.Entry(water).CurrentValues.SetValues(waterModel);
                         _context.SaveChanges();
                         result.entity = _mapper.Map<BillsDetailsModel>(water);
                         break;
                     case BillType.Gas:
-                        model = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(updateBill);
+                        var gasModel = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(updateBill);
                         var gas = _context.GasBill.FirstOrDefault(h => h.Id == updateBill.Id);
-                        model.PaymentDate = gas.PaymentDate;
-                        _context.Entry(gas).CurrentValues.SetValues(model);
+                        gasModel.BillDate = gas.BillDate;
+                        _context.Entry(gas).CurrentValues.SetValues(gasModel);
                         _context.SaveChanges();
                         result.entity = _mapper.Map<BillsDetailsModel>(gas);
                         break;
                     default:
-                        model = null;
                         break;
                 }
                 result.isSuccess = true;
@@ -238,25 +311,29 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
                 switch (type)
                 {
                     case BillType.Home:
-                        if (BillHelpers.IsNextMonth(_context.HomeBill.FirstOrDefault(h => h.BillsId == id).BillDate))
+                        var home = _context.HomeBill.FirstOrDefault(h => h.BillsId == id);
+                        if (home == null || BillHelpers.IsNextMonth(home.BillDate))
                         {
                             isTrue = true;
                         }
                         break;
                     case BillType.Electric:
-                        if (BillHelpers.IsNextMonth(_context.ElectricBill.FirstOrDefault(e => e.BillsId == id).BillDate))
+                        var electric = _context.ElectricBill.FirstOrDefault(e => e.BillsId == id);
+                        if (electric == null || BillHelpers.IsNextMonth(electric.BillDate))
                         {
                             isTrue = true;
                         }
                         break;
                     case BillType.Water:
-                        if (BillHelpers.IsNextMonth(_context.WaterBill.FirstOrDefault(w => w.BillsId == id).BillDate))
+                        var water = _context.WaterBill.FirstOrDefault(w => w.BillsId == id);
+                        if (water == null || BillHelpers.IsNextMonth(water.BillDate))
                         {
                             isTrue = true;
                         }
                         break;
                     case BillType.Gas:
-                        if (BillHelpers.IsNextMonth(_context.GasBill.FirstOrDefault(g => g.BillsId == id).BillDate))
+                        var gas = _context.GasBill.FirstOrDefault(g => g.BillsId == id);
+                        if (gas == null || BillHelpers.IsNextMonth(gas.BillDate))
                         {
                             isTrue = true;
                         }

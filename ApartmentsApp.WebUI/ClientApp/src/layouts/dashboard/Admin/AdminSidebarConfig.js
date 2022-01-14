@@ -31,7 +31,7 @@ const sidebarConfig = [
         icon: getIcon(homeFill)
     },
     {
-        title: 'Faturalar',
+        title: 'Faturalar ve Aidatlar',
         path: '/admin/bills',
         icon: getIcon(fileTextFill)
     }
