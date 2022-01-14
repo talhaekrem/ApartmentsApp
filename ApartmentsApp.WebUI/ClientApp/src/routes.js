@@ -3,8 +3,6 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
 import Login from './pages/Login';
-//import Products from './pages/Products';
-import Blog from './pages/Blog';
 import NotFound from './pages/Page404';
 // ----------------------------------------------------------------------
 import AdminDashboardLayout from './layouts/dashboard/Admin';
@@ -31,9 +29,11 @@ import DetailMessage from './pages/Message/DetailMessage';
 import BillAdmin from './pages/BillAdmin/BillAdmin';
 import AddBillAdmin from './pages/BillAdmin/AddBillAdmin';
 import DetailBillAdmin from './pages/BillAdmin/DetailBillAdmin';
-//import UpdateBillAdmin from './pages/BillAdmin/UpdateBillAdmin';
-
 // ----------------------------------------------------------------------
+import BillUser from './pages/BillUser/BillUser';
+import DetailBillUser from './pages/BillUser/DetailBillUser';
+// ----------------------------------------------------------------------
+
 
 export default function Router() {
     return useRoutes([
@@ -65,7 +65,6 @@ export default function Router() {
             element: <AdminDashboardLayout />,
             children: [
                 { path: 'add', element: <AddBillAdmin /> },
-                // { path: 'update/:billId', element: <UpdateBillAdmin /> },
                 { path: ':type/:billId', element: <DetailBillAdmin /> },
             ]
         },
@@ -93,7 +92,7 @@ export default function Router() {
             children: [
                 { element: <Navigate to="/dashboard/index" replace /> },
                 { path: 'index', element: <UserDashboard /> },
-                { path: 'bills', element: <Blog /> },
+                { path: 'bills', element: <BillUser /> },
                 { path: 'messages', element: <Message /> }
             ]
         },
@@ -103,6 +102,13 @@ export default function Router() {
             children: [
                 { path: 'add', element: <AddMessage /> },
                 { path: 'detail/:messageId', element: <DetailMessage /> },
+            ]
+        },
+        {//user faturalar sayfası
+            path: '/dashboard/bills',
+            element: <UserDashboardLayout />,
+            children: [
+                { path: 'detail/:type/:billId', element: <DetailBillUser /> },
             ]
         },
         //login register sayfalari

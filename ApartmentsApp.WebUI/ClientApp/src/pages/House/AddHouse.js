@@ -47,7 +47,8 @@ export default function AddHouse() {
             BlockName: "",
             HomeType: "",
             FloorNumber: "",
-            DoorNumber: ""
+            DoorNumber: "",
+            DuesPrice: 0
         },
         validationSchema: schema,
         onSubmit: (newHouse, { resetForm }) => {
@@ -122,6 +123,13 @@ export default function AddHouse() {
                             </Stack>
 
                             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                <TextField
+                                    label="Aidat Bilgisi"
+                                    {...getFieldProps('DuesPrice')}
+                                    error={Boolean(touched.DuesPrice && errors.DuesPrice)}
+                                    helperText={touched.DuesPrice && errors.DuesPrice}
+                                />
+
                                 <FormControlLabel
                                     control={<Switch {...getFieldProps('IsOwned')} checked={values.IsOwned} />}
                                     label="Evin sahibi var mı?"

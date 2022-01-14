@@ -21,70 +21,114 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             _mapper = mapper;
         }
 
-        #region fatura ekle
-        public BaseModel<BillsDetailsModel> AddBill(BillsAddModel addBill, BillType type)
+        #region herkese ekle
+        public BaseModel<bool> AddEveryone(BillsAddMultipleModel model)
         {
-            var result = new BaseModel<BillsDetailsModel>() { isSuccess = false };
+            var result = new BaseModel<bool> { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                //bu daireye ait son faturanın idsini al. pkdır kendini tekrar etmez
-                int lastBillId = 0;
-                var lastBill = _context.Bills.OrderBy(s => s.Id).LastOrDefault(b => b.HomeId == addBill.HomeId);
-                if (lastBill != null)
-                {
-                    lastBillId = lastBill.Id;
-                }
-                //bu kısım daha önceden bir fatura eklenmemiş ve ilk defa fatura ekliyor demek.
-                //son faturanın üzerinden 30 gün geçmiş mi geçmemiş mi kontrolünü de yapıyoruz.
-                //ilk önce ana bill tablosunda satır oluşturuyoruz.
+                //fatura kesilebilecek evlerin idsini ve aidat bilgisini alıyorum.ana bills tablosundaki homeId aşağıdaki id seçeneği olacak
+                //aidat bilgisi ise aidat tablosuna otomatik eklencek. fatura kesim tarihi ise bugün olacaktır.
+                var billableHomes = _context.Homes.Where(h => h.IsOwned && h.IsActive).Select(b => new { b.Id, b.DuesPrice }).ToList();
 
-                if (CanTakeBill(lastBillId, type))
+                for (int i = 0; i < billableHomes.Count; i++)
                 {
-                    var newBill = new ApartmentsApp.DB.Entities.Bills();
-                    newBill.HomeId = addBill.HomeId;
-                    _context.Bills.Add(newBill);
+                    int homeId = billableHomes[i].Id;
+                    var mainBillTable = new ApartmentsApp.DB.Entities.Bills();
+
+                    mainBillTable.HomeId = homeId;
+                    _context.Bills.Add(mainBillTable);
                     _context.SaveChanges();
-                    addBill.BillsId = newBill.Id;
 
-                    switch (type)
+                    if (model.Dues)
                     {
-                        case BillType.Home:
-                            var home = _mapper.Map<ApartmentsApp.DB.Entities.HomeBill>(addBill);
-                            _context.HomeBill.Add(home);
-                            _context.SaveChanges();
-                            result.isSuccess = true;
-                            result.entity = _mapper.Map<BillsDetailsModel>(home);
-                            break;
-                        case BillType.Electric:
-                            var electric = _mapper.Map<ApartmentsApp.DB.Entities.ElectricBill>(addBill);
-                            _context.ElectricBill.Add(electric);
-                            _context.SaveChanges();
-                            result.isSuccess = true;
-                            result.entity = _mapper.Map<BillsDetailsModel>(electric);
-                            break;
-                        case BillType.Water:
-                            var water = _mapper.Map<ApartmentsApp.DB.Entities.WaterBill>(addBill);
-                            _context.WaterBill.Add(water);
-                            _context.SaveChanges();
-                            result.isSuccess = true;
-                            result.entity = _mapper.Map<BillsDetailsModel>(water);
-                            break;
-                        case BillType.Gas:
-                            var gas = _mapper.Map<ApartmentsApp.DB.Entities.GasBill>(addBill);
-                            _context.GasBill.Add(gas);
-                            _context.SaveChanges();
-                            result.isSuccess = true;
-                            result.entity = _mapper.Map<BillsDetailsModel>(gas);
-                            break;
-                        default:
-                            break;
+                        var duesTable = new ApartmentsApp.DB.Entities.HomeBill();
+                        duesTable.BillsId = mainBillTable.Id;
+                        duesTable.BillDate = DateTime.Now;
+                        duesTable.Price = billableHomes[i].DuesPrice;
+                        _context.HomeBill.Add(duesTable);
+                    }
+                    if (model.Electric)
+                    {
+                        var electricTable = new ApartmentsApp.DB.Entities.ElectricBill();
+                        electricTable.BillsId = mainBillTable.Id;
+                        electricTable.BillDate = model.ElectricBillDate;
+                        electricTable.Price = model.ElectricPrice;
+                        _context.ElectricBill.Add(electricTable);
                     }
 
+                    if (model.Water)
+                    {
+                        var waterTable = new ApartmentsApp.DB.Entities.WaterBill();
+                        waterTable.BillsId = mainBillTable.Id;
+                        waterTable.BillDate = model.WaterBillDate;
+                        waterTable.Price = model.WaterPrice;
+                        _context.WaterBill.Add(waterTable);
+                    }
+
+                    if (model.Gas)
+                    {
+                        var gasTable = new ApartmentsApp.DB.Entities.GasBill();
+                        gasTable.BillsId = mainBillTable.Id;
+                        gasTable.BillDate = model.GasBillDate;
+                        gasTable.Price = model.GasPrice;
+                        _context.GasBill.Add(gasTable);
+                    }
+                    _context.SaveChanges();
                 }
-                else
+                result.isSuccess = true;
+            };
+            return result;
+        }
+        #endregion
+
+        #region fatura ekle
+        public BaseModel<bool> AddBill(BillsAddMultipleModel addBill)
+        {
+            var result = new BaseModel<bool>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                var currentHome = _context.Homes.FirstOrDefault(h => h.Id == addBill.HomeId);
+
+                var mainBillTable = new ApartmentsApp.DB.Entities.Bills();
+                mainBillTable.HomeId = currentHome.Id;
+                _context.Bills.Add(mainBillTable);
+                _context.SaveChanges();
+                if (addBill.Dues)
                 {
-                    result.exeptionMessage = $"Son {BillHelpers.GetEnumDisplayName(type)} faturasının üzerinden 1 ay geçmediği için yeni fatura ekleyemezsiniz.";
+                    var duesTable = new ApartmentsApp.DB.Entities.HomeBill();
+                    duesTable.BillsId = mainBillTable.Id;
+                    duesTable.BillDate = DateTime.Now;
+                    duesTable.Price = currentHome.DuesPrice;
+                    _context.HomeBill.Add(duesTable);
                 }
+                if (addBill.Electric)
+                {
+                    var electricTable = new ApartmentsApp.DB.Entities.ElectricBill();
+                    electricTable.BillsId = mainBillTable.Id;
+                    electricTable.BillDate = addBill.ElectricBillDate;
+                    electricTable.Price = addBill.ElectricPrice;
+                    _context.ElectricBill.Add(electricTable);
+                }
+
+                if (addBill.Water)
+                {
+                    var waterTable = new ApartmentsApp.DB.Entities.WaterBill();
+                    waterTable.BillsId = mainBillTable.Id;
+                    waterTable.BillDate = addBill.WaterBillDate;
+                    waterTable.Price = addBill.WaterPrice;
+                    _context.WaterBill.Add(waterTable);
+                }
+
+                if (addBill.Gas)
+                {
+                    var gasTable = new ApartmentsApp.DB.Entities.GasBill();
+                    gasTable.BillsId = mainBillTable.Id;
+                    gasTable.BillDate = addBill.GasBillDate;
+                    gasTable.Price = addBill.GasPrice;
+                    _context.GasBill.Add(gasTable);
+                }
+                _context.SaveChanges();
             }
             if (!result.isSuccess)
             {

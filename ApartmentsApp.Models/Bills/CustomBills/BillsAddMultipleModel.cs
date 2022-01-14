@@ -9,7 +9,9 @@ namespace ApartmentsApp.Models.Bills.CustomBills
     public class BillsAddMultipleModel
     {
         public int Id { get; set; }
-        public int HomeId { get; set; }
+        public int? HomeId { get; set; }
+
+        public bool IsEveryone { get; set; }
 
         public bool Electric { get; set; }
         public decimal ElectricPrice { get; set; }
@@ -24,7 +26,5 @@ namespace ApartmentsApp.Models.Bills.CustomBills
         public DateTime GasBillDate { get; set; }
 
         public bool Dues { get; set; }
-        public decimal DuesPrice { get; set; }
-        public DateTime DuesBillDate { get; set; }
     }
 }

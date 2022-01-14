@@ -11,6 +11,6 @@ namespace ApartmentsApp.Services.BillServices
     public interface IBillService
     {
         BaseModel<BillsListAdminModel> GetAllAsAdmin();
-        BaseModel<BillsListUserModel> GetAllAsUser();
+        BaseModel<BillsListUserModel> GetAllAsUser(int userId);
     }
 }

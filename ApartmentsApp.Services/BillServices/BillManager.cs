@@ -17,13 +17,6 @@ namespace ApartmentsApp.Services.BillServices
             var result = new BaseModel<BillsListAdminModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                /*fatura idsiniyle 4 adet fatura tipi tablolarına foreign key olan BillsId eşitliğine göre girip isPaid bilgilerini
-                 modeldeki ismiyle aynı olacak şekilde isimlendirip seçiyorum. modeldeki ismiyle aynı yapmamın sebebi map yapacağım için
-                yoksa patates de diyebiliriz. "|" veya yapmamın sebebi mesela henüz doğalgaz faturası girilmemişse doğalgaz tablosunda
-                BillsId olmayacak ve hata verecektir. 
-                 */
-                //var newq = from bills in _context.Bills
-                //           join  home in _context.HomeBill
                 List<BillsListAdminModel> model = new();
                 for (int i = 0; i < _context.Bills.Count(); i++)
                 {
@@ -78,25 +71,7 @@ namespace ApartmentsApp.Services.BillServices
                     });
 
                 };
-                //var query = from home in _context.HomeBill
-                //            from water in _context.WaterBill
-                //            from electric in _context.ElectricBill
-                //            from gas in _context.GasBill
-                //            join bills in _context.Bills
-                //            on home.BillsId | water.BillsId | electric.BillsId | gas.BillsId equals bills.Id
-                //            select new BillsListAdminModel()
-                //            {
-                //                Id = bills.Id,
-                //                HomeId = bills.HomeId,
-                //                IsHomeBillPaid = home.IsPaid,
-                //                HomeBillActive = home.Price != 0 ? true : false,
-                //                IsElectricBillPaid = electric.IsPaid,
-                //                ElectricBillActive = electric.Price != 0 ? true : false,
-                //                IsWaterBillPaid = water.IsPaid,
-                //                WaterBillActive = water.Price != 0 ? true : false,
-                //                IsGasBillPaid = gas.IsPaid,
-                //                GasBillActive = gas.Price != 0 ? true : false,
-                //            };
+
                 if (model.Any())
                 {
                     result.entityList = model;
@@ -110,33 +85,70 @@ namespace ApartmentsApp.Services.BillServices
             return result;
         }
 
-        public BaseModel<BillsListUserModel> GetAllAsUser()
+        public BaseModel<BillsListUserModel> GetAllAsUser(int userId)
         {
             var result = new BaseModel<BillsListUserModel>() { isSuccess = false };
             using (var _context = new ApartmentsAppContext())
             {
-                //bills tablosundaki idye göre 4 farklı fatura tablosına giriyorum ve her faturaya ait fiyat ve fatura kesim tarihini alıyorum
-                var query = from home in _context.HomeBill
-                            from water in _context.WaterBill
-                            from electric in _context.ElectricBill
-                            from gas in _context.GasBill
-                            join bills in _context.Bills
-                            on home.BillsId | water.BillsId | electric.BillsId | gas.BillsId equals bills.Id
-                            select new BillsListUserModel()
-                            {
-                                Id = bills.Id,
-                                HomePrice = home.Price,
-                                HomeBillDate = home.BillDate,
-                                ElectricPrice = electric.Price,
-                                ElectricBillDate = electric.BillDate,
-                                WaterPrice = water.Price,
-                                WaterBillDate = water.BillDate,
-                                GasPrice = gas.Price,
-                                GasBillDate = gas.BillDate
-                            };
-                if (query.Any())
+                List<BillsListUserModel> model = new();
+                int myHomeId = _context.Homes.FirstOrDefault(h => h.OwnerId == userId).Id;
+                var myBills = _context.Bills.Where(b => b.HomeId == myHomeId).Select(e => e.Id).ToList();
+                for (int i = 0; i < myBills.Count; i++)
                 {
-                    result.entityList = query.ToList();
+                    var dues = _context.HomeBill.FirstOrDefault(d => d.BillsId == myBills[i]);
+                    var electric = _context.ElectricBill.FirstOrDefault(d => d.BillsId == myBills[i]);
+                    var water = _context.WaterBill.FirstOrDefault(d => d.BillsId == myBills[i]);
+                    var gas = _context.GasBill.FirstOrDefault(d => d.BillsId == myBills[i]);
+
+                    bool IsHomeBillPaid = false;
+                    bool HomeBillActive = false;
+                    bool IsElectricBillPaid = false;
+                    bool ElectricBillActive = false;
+                    bool IsWaterBillPaid = false;
+                    bool WaterBillActive = false;
+                    bool IsGasBillPaid = false;
+                    bool GasBillActive = false;
+
+                    if (dues != null)
+                    {
+                        IsHomeBillPaid = dues.IsPaid;
+                        HomeBillActive = true;
+                    }
+                    if (electric != null)
+                    {
+                        IsElectricBillPaid = electric.IsPaid;
+                        ElectricBillActive = true;
+                    }
+                    if (water != null)
+                    {
+                        IsWaterBillPaid = water.IsPaid;
+                        WaterBillActive = true;
+                    }
+                    if (gas != null)
+                    {
+                        IsGasBillPaid = gas.IsPaid;
+                        GasBillActive = true;
+                    }
+
+                    model.Add(new BillsListUserModel()
+                    {
+                        Id = myBills[i],
+                        IsHomeBillPaid = IsHomeBillPaid,
+                        HomeBillActive = HomeBillActive,
+                        IsElectricBillPaid = IsElectricBillPaid,
+                        ElectricBillActive = ElectricBillActive,
+                        IsWaterBillPaid = IsWaterBillPaid,
+                        WaterBillActive = WaterBillActive,
+                        IsGasBillPaid = IsGasBillPaid,
+                        GasBillActive = GasBillActive
+                    });
+
+                };
+
+
+                if (model.Any())
+                {
+                    result.entityList = model;
                     result.isSuccess = true;
                 }
                 else

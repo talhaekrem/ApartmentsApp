@@ -40,50 +40,13 @@ namespace ApartmentsApp.WebUI.Controllers
         public BaseModel<BillsDetailsModel> Insert([FromBody] BillsAddMultipleModel model)
         {
             BaseModel<BillsDetailsModel> response = new();
-            response.entityList = new();
-            if (model.Dues)
+            if (model.IsEveryone)
             {
-                BillsAddModel dues = new()
-                {
-                    BillDate = model.DuesBillDate,
-                    BillsId = model.Id,
-                    HomeId = model.HomeId,
-                    Price = model.DuesPrice
-                };
-                response.entityList.Add(_customBillService.AddBill(dues, BillType.Home).entity);
+                _customBillService.AddEveryone(model);
             }
-            if (model.Electric)
+            else
             {
-                BillsAddModel electric = new()
-                {
-                    BillDate = model.ElectricBillDate,
-                    BillsId = model.Id,
-                    HomeId = model.HomeId,
-                    Price = model.ElectricPrice
-                };
-                response.entityList.Add(_customBillService.AddBill(electric, BillType.Electric).entity);
-            }
-            if (model.Water)
-            {
-                BillsAddModel water = new()
-                {
-                    BillDate = model.WaterBillDate,
-                    BillsId = model.Id,
-                    HomeId = model.HomeId,
-                    Price = model.WaterPrice
-                };
-                response.entityList.Add(_customBillService.AddBill(water, BillType.Water).entity);
-            }
-            if (model.Gas)
-            {
-                BillsAddModel gas = new()
-                {
-                    BillDate = model.GasBillDate,
-                    BillsId = model.Id,
-                    HomeId = model.HomeId,
-                    Price = model.GasPrice
-                };
-                response.entityList.Add(_customBillService.AddBill(gas, BillType.Gas).entity);
+                _customBillService.AddBill(model);
             }
             response.isSuccess = true;
             return response;

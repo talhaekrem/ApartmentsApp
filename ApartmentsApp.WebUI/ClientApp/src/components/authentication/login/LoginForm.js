@@ -5,13 +5,14 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
+import LoadingButton from '@mui/lab/LoadingButton';
+
 // material
 import {
     Stack,
     TextField,
     IconButton,
     InputAdornment,
-    Button,
     Alert
 } from '@mui/material';
 
@@ -21,7 +22,7 @@ export default function LoginForm() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [result, setResult] = useState([]);
-
+    const [loading, setLoading] = useState(false);
     const LoginSchema = Yup.object().shape({
         tcNo: Yup.string().min(11, "TC kimlik numarası 11 haneden oluşmalıdır").max(11, "TC kimlik numarası 11 haneden oluşmalıdır").required('TC kimlik no gereklidir'),
         password: Yup.string().required('Şifre gereklidir')
@@ -51,6 +52,7 @@ export default function LoginForm() {
         },
         validationSchema: LoginSchema,
         onSubmit: (login) => {
+            setLoading(true);
             fetch("/Account/Login", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -71,7 +73,7 @@ export default function LoginForm() {
                     else {
                         setResult(data);
                     }
-                });
+                }).finally(()=> setLoading(false));
         }
     });
 
@@ -119,14 +121,15 @@ export default function LoginForm() {
                     />
                 </Stack>
 
-                <Button
+                <LoadingButton
                     fullWidth
                     size="large"
                     type="submit"
                     variant="contained"
+                    loading={loading}
                 >
                     Giriş Yap
-                </Button>
+                </LoadingButton>
             </Form>
         </FormikProvider>
     );

@@ -38,11 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\src\components\_dashboard\billsUser\" />
-    <Folder Include="ClientApp\src\pages\BillUser\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="bundleconfig.json" />
   </ItemGroup>
 

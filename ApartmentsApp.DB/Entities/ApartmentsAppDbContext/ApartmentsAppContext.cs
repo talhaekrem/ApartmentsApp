@@ -9,7 +9,6 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
 {
     public partial class ApartmentsAppContext : DbContext
     {
-        //Scaffold-DbContext "Server=TALHAEKREM;Database=ApartmentsDB;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entities -ContextDir Entities/ApartmentsAppDbContext -Context ApartmentsAppContext -Project ApartmentsApp.DB -StartupProject ApartmentsApp.DB -NoPluralize -Force
         public ApartmentsAppContext()
         {
         }
@@ -43,7 +42,6 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=TALHAEKREM;Database=ApartmentsDB;Trusted_Connection=True;");
             }
         }
@@ -206,6 +204,10 @@ namespace ApartmentsApp.DB.Entities.ApartmentsAppDbContext
                     .HasColumnName("blockName");
 
                 entity.Property(e => e.DoorNumber).HasColumnName("doorNumber");
+
+                entity.Property(e => e.DuesPrice)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("duesPrice");
 
                 entity.Property(e => e.FloorNumber).HasColumnName("floorNumber");
 

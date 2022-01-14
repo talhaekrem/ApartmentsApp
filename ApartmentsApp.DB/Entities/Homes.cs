@@ -22,6 +22,7 @@ namespace ApartmentsApp.DB.Entities
         public short DoorNumber { get; set; }
         public DateTime InsertDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public decimal DuesPrice { get; set; }
 
         public virtual Users Owner { get; set; }
         public virtual ICollection<Bills> Bills { get; set; }

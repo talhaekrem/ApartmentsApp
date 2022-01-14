@@ -45,13 +45,14 @@ export default function AddUser() {
         WaterPrice: Yup.number().required("Fiyat giriniz"),
         WaterBillDate: Yup.date().default(() => { return new Date() }),
         GasPrice: Yup.number().required("Fiyat giriniz"),
-        GasBillDate: Yup.date().default(() => { return new Date() })
+        GasBillDate: Yup.date().default(() => { return new Date() }),
     });
 
 
     const formik = useFormik({
         initialValues: {
             HomeId: 0,
+            Dues: false,
             Electric:false,
             ElectricPrice: 0,
             ElectricBillDate: new Date().now,
@@ -61,9 +62,11 @@ export default function AddUser() {
             Gas: false,
             GasPrice: 0,
             GasBillDate: new Date().now,
+            IsEveryone:false
         },
         validationSchema: schema,
         onSubmit: (newBill, { resetForm }) => {
+            console.log(newBill);
             fetch("/api/BillAdmin", {
                method: "POST",
                headers: { 'Content-Type': 'application/json' },
@@ -78,11 +81,11 @@ export default function AddUser() {
 
 
     return (
-        <Page title="Yeni Fatura Ekle | My Apartments">
+        <Page title="Yeni Fatura - Aidat Ekle | My Apartments">
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h3" gutterBottom>
-                        Yeni Fatura Ekle
+                        Yeni Fatura veya Aidat Ekle
                     </Typography>
                 </Stack>
                 <FormikProvider value={formik}>
@@ -94,9 +97,21 @@ export default function AddUser() {
                             }
                             {result.isSuccess === false && <Alert severity='error'>{result.exeptionMessage}</Alert>}
                         </Stack>
+                        <small>Aidat anahtarını aktifleştirdiğiniz takdirde mevcut kişinin aidat tutarı, bugünün tarihiyle otomatik olarak kendisine yansıtılacaktır.</small>
+                        <small>Aidat tutarını görmek için Evler kısmından ilgili kişinin ev detayına göz atın.</small>
+
                         <Stack mb={5}>
+                            <FormControlLabel
+                                control={<Switch {...getFieldProps('Dues')} checked={(values.Dues)} />}
+                                label="Aidat da ekleyeceğim"
+                            />
+                            <FormControlLabel
+                                control={<Switch {...getFieldProps('IsEveryone')} checked={(values.IsEveryone)} />}
+                                label="Tüm Herkese Ekle"
+                            />
                             <Autocomplete
                                 name="HomeId"
+                                disabled={values.IsEveryone}
                                 onChange={(event, data) => { values.HomeId = data?.id }}
                                 sx={{ width: 300 }}
                                 popupIcon={null}

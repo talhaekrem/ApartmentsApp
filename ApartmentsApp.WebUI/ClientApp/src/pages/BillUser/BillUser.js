@@ -1,7 +1,5 @@
 import { filter } from 'lodash';
-import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
@@ -23,14 +21,14 @@ import Page from '../../components/Page';
 import Label from '../../components/Label';
 import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
-import { BillAdminListHead, BillAdminListToolbar } from '../../components/_dashboard/billsAdmin';
+import { BillUserListHead, BillUserListToolbar } from '../../components/_dashboard/billsUser';
 
 //request
 import axios from "axios";
 // ----------------------------------------------------------------------
-const cursorPointer = {cursor:"pointer"};
+const cursorPointer = { cursor: "pointer" };
 const TABLE_HEAD = [
-    { id: 'homeId', label: 'Evin Idsi', alignRight: false },
+    { id: 'id', label: 'Id', alignRight: false },
     { id: 'isHomeBillPaid', label: 'Aidat', alignRight: false },
     { id: 'isElectricBillPaid', label: 'Elektrik', alignRight: false },
     { id: 'isWaterBillPaid', label: 'Su', alignRight: false },
@@ -62,27 +60,27 @@ function applySortFilter(array, comparator, query) {
         return a[1] - b[1];
     });
     if (query) {
-        return filter(array, (row) => row.homeId.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1);
+        return filter(array, (row) => row.id.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1);
     }
     return stabilizedThis.map((el) => el[0]);
 }
 
-export default function BillAdmin() {
+export default function BillUser() {
     //loading kısmı
     const [loading, setLoading] = useState(true);
-    const [billAdmin, setBillAdmin] = useState({});
+    const [billUser, setBillUser] = useState({});
     useEffect(() => {
-        axios("/api/BillAdmin")
-            .then((res) => setBillAdmin(res.data))
+        axios("/api/BillUser")
+            .then((res) => setBillUser(res.data))
             .catch((e) => console.log(e))
             .finally(() => setLoading(false));
     }, []);
-    if (billAdmin.entityList == null) {
-        billAdmin.entityList = []
+    if (billUser.entityList == null) {
+        billUser.entityList = []
     }
     const [page, setPage] = useState(0);
     const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('homeId');
+    const [orderBy, setOrderBy] = useState('id');
     const [filterName, setFilterName] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -105,9 +103,9 @@ export default function BillAdmin() {
         setFilterName(event.target.value);
     };
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - billAdmin.entityList.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - billUser.entityList.length) : 0;
 
-    const filteredUsers = applySortFilter(billAdmin.entityList, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(billUser.entityList, getComparator(order, orderBy), filterName);
 
     const isUserNotFound = filteredUsers.length === 0;
 
@@ -118,18 +116,10 @@ export default function BillAdmin() {
                     <Typography variant="h3" gutterBottom>
                         Fatura ve Aidat
                     </Typography>
-                    <Button
-                        variant="contained"
-                        component={RouterLink}
-                        to="add"
-                        startIcon={<Icon icon={plusFill} />}
-                    >
-                        Yeni Fatura Ekle
-                    </Button>
                 </Stack>
 
                 <Card>
-                    <BillAdminListToolbar
+                    <BillUserListToolbar
                         filterName={filterName}
                         onFilterName={handleFilterByName}
                     />
@@ -137,11 +127,11 @@ export default function BillAdmin() {
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>
-                                <BillAdminListHead
+                                <BillUserListHead
                                     order={order}
                                     orderBy={orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={billAdmin.entityList.length}
+                                    rowCount={billUser.entityList.length}
                                     onRequestSort={handleRequestSort}
                                 />
                                 <TableBody>
@@ -149,7 +139,6 @@ export default function BillAdmin() {
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
                                             const { id,
-                                                homeId,
                                                 isHomeBillPaid,
                                                 homeBillActive,
                                                 isElectricBillPaid,
@@ -165,35 +154,35 @@ export default function BillAdmin() {
                                                     key={index}
                                                     tabIndex={-1}
                                                 >
-                                                    <TableCell align="left">{homeId}</TableCell>
+                                                    <TableCell align="left">{id}</TableCell>
                                                     <TableCell align="left">
                                                         {
                                                             homeBillActive === true ? (
-                                                                <Button 
-                                                                color="secondary"
+                                                                <Button
+                                                                    color="secondary"
                                                                     size="small"
-                                                                    to={`dues/${id}`}
+                                                                    to={`detail/dues/${id}`}
                                                                     component={RouterLink}>
-                                                                <Label
-                                                                style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color={(isHomeBillPaid === false && 'error') || 'info'}>
-                                                                    {isHomeBillPaid ? "Ödendi" : "Ödenmedi"}
-                                                                </Label>
+                                                                    <Label
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color={(isHomeBillPaid === false && 'error') || 'info'}>
+                                                                        {isHomeBillPaid ? "Ödendi" : "Ödenmedi"}
+                                                                    </Label>
                                                                 </Button>
-  
+
                                                             ) : (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
-                                                                    to={`dues/${id}`}
+                                                                    to={`detail/dues/${id}`}
                                                                     component={RouterLink}>
-                                                                <Label
-                                                                style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color="secondary">
-                                                                    Fatura Kesilmedi
-                                                                </Label>
+                                                                    <Label
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color="secondary">
+                                                                        Fatura Kesilmedi
+                                                                    </Label>
                                                                 </Button>
 
                                                             )
@@ -203,33 +192,33 @@ export default function BillAdmin() {
                                                         {
                                                             electricBillActive === true ? (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
                                                                     component={RouterLink}
-                                                                    to={`electric/${id}`}>
-                                                                <Label
-                                                                style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color={(isElectricBillPaid === false && 'error') || 'info'}>
-                                                                    {isElectricBillPaid ? "Ödendi" : "Ödenmedi"}
+                                                                    to={`detail/electric/${id}`}>
+                                                                    <Label
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color={(isElectricBillPaid === false && 'error') || 'info'}>
+                                                                        {isElectricBillPaid ? "Ödendi" : "Ödenmedi"}
                                                                     </Label>
                                                                 </Button>
 
                                                             ) : (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
                                                                     component={RouterLink}
-                                                                    to={`electric/${id}`}
+                                                                    to={`detail/electric/${id}`}
                                                                 >
                                                                     <Label
-                                                                    style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color="secondary">
-                                                                    Fatura Kesilmedi
-                                                                </Label>
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color="secondary">
+                                                                        Fatura Kesilmedi
+                                                                    </Label>
                                                                 </Button>
-                                                                
+
                                                             )
                                                         }
                                                     </TableCell>
@@ -238,34 +227,34 @@ export default function BillAdmin() {
                                                         {
                                                             waterBillActive === true ? (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
                                                                     component={RouterLink}
-                                                                    to={`water/${id}`}
+                                                                    to={`detail/water/${id}`}
                                                                 >
                                                                     <Label
-                                                                    style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color={(isWaterBillPaid === false && 'error') || 'info'}>
-                                                                    {isWaterBillPaid ? "Ödendi" : "Ödenmedi"}
-                                                                </Label>
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color={(isWaterBillPaid === false && 'error') || 'info'}>
+                                                                        {isWaterBillPaid ? "Ödendi" : "Ödenmedi"}
+                                                                    </Label>
                                                                 </Button>
-                                                                
+
                                                             ) : (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
                                                                     component={RouterLink}
-                                                                    to={`water/${id}`}
+                                                                    to={`detail/water/${id}`}
                                                                 >
                                                                     <Label
-                                                                    style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color="secondary">
-                                                                    Fatura Kesilmedi
-                                                                </Label>
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color="secondary">
+                                                                        Fatura Kesilmedi
+                                                                    </Label>
                                                                 </Button>
-                                                                
+
                                                             )
                                                         }
                                                     </TableCell>
@@ -274,40 +263,41 @@ export default function BillAdmin() {
                                                         {
                                                             gasBillActive === true ? (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
                                                                     component={RouterLink}
-                                                                    to={`gas/${id}`}
+                                                                    to={`detail/gas/${id}`}
                                                                 >
                                                                     <Label
-                                                                    style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color={(isGasBillPaid === false && 'error') || 'info'}>
-                                                                    {isGasBillPaid ? "Ödendi" : "Ödenmedi"}
-                                                                </Label>
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color={(isGasBillPaid === false && 'error') || 'info'}>
+                                                                        {isGasBillPaid ? "Ödendi" : "Ödenmedi"}
+                                                                    </Label>
                                                                 </Button>
-                                                                
+
                                                             ) : (
                                                                 <Button
-                                                                color="secondary"
+                                                                    color="secondary"
                                                                     size="small"
                                                                     component={RouterLink}
-                                                                    to={`gas/${id}`}
+                                                                        to={`detail/gas/${id}`}
                                                                 >
                                                                     <Label
-                                                                    style={cursorPointer}
-                                                                    variant="ghost"
-                                                                    color="secondary">
-                                                                    Fatura Kesilmedi
-                                                                </Label>
+                                                                        style={cursorPointer}
+                                                                        variant="ghost"
+                                                                        color="secondary">
+                                                                        Fatura Kesilmedi
+                                                                    </Label>
                                                                 </Button>
-                                                                
                                                             )
                                                         }
                                                     </TableCell>
                                                 </TableRow>
                                             );
                                         })}
+
+
                                     {emptyRows > 0 && (
                                         <TableRow style={{ height: 53 * emptyRows }}>
                                             <TableCell colSpan={5} />
@@ -339,7 +329,7 @@ export default function BillAdmin() {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={billAdmin.entityList.length}
+                        count={billUser.entityList.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

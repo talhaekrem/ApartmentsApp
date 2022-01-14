@@ -80,6 +80,11 @@ export default function DetailHouse() {
                                     </TableRow>
 
                                     <TableRow>
+                                        <TableCell align="left">Evin Aidat Tutarı</TableCell>
+                                        <TableCell align="left">{house.duesPrice} TL</TableCell>
+                                    </TableRow>
+
+                                    <TableRow>
                                         <TableCell align="left">Bulunduğu kat</TableCell>
                                         <TableCell align="left">{house.floorNumber}</TableCell>
                                     </TableRow>

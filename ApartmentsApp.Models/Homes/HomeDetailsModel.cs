@@ -18,5 +18,7 @@ namespace ApartmentsApp.Models.Homes
         public short DoorNumber { get; set; }
         public DateTime InsertDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public decimal DuesPrice { get; set; }
+
     }
 }

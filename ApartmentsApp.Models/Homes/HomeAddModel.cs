@@ -16,5 +16,6 @@ namespace ApartmentsApp.Models.Homes
         public string HomeType { get; set; }
         public short FloorNumber { get; set; }
         public short DoorNumber { get; set; }
+        public decimal DuesPrice { get; set; }
     }
 }
