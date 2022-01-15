@@ -389,5 +389,54 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
             return isTrue;
         }
         #endregion
+
+        #region fatura öde
+        public bool PayBill(int id, BillType type)
+        {
+            bool result = false;
+            using (var _context = new ApartmentsAppContext())
+            {
+                switch (type)
+                {
+                    case BillType.Home:
+                        var dues = _context.HomeBill.FirstOrDefault(h => h.BillsId == id);
+                        dues.PaymentDate = DateTime.Now;
+                        dues.IsPaid = true;
+                        _context.HomeBill.Update(dues);
+                        _context.SaveChanges();
+                        result = true;
+                        break;
+                    case BillType.Electric:
+                        var electric = _context.ElectricBill.FirstOrDefault(e => e.BillsId == id);
+                        electric.PaymentDate = DateTime.Now;
+                        electric.IsPaid = true;
+                        _context.ElectricBill.Update(electric);
+                        _context.SaveChanges();
+                        result = true;
+                        break;
+                    case BillType.Water:
+                        var water = _context.WaterBill.FirstOrDefault(w => w.BillsId == id);
+                        water.PaymentDate = DateTime.Now;
+                        water.IsPaid = true;
+                        _context.WaterBill.Update(water);
+                        _context.SaveChanges();
+                        result = true;
+                        break;
+                    case BillType.Gas:
+                        var gas = _context.GasBill.FirstOrDefault(g => g.BillsId == id);
+                        gas.PaymentDate = DateTime.Now;
+                        gas.IsPaid = true;
+                        _context.GasBill.Update(gas);
+                        _context.SaveChanges();
+                        result = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return result;
+        }
+        #endregion
+
     }
 }

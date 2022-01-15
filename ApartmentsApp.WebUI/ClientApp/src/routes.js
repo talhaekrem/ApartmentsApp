@@ -33,7 +33,8 @@ import DetailBillAdmin from './pages/BillAdmin/DetailBillAdmin';
 import BillUser from './pages/BillUser/BillUser';
 import DetailBillUser from './pages/BillUser/DetailBillUser';
 // ----------------------------------------------------------------------
-
+import AddCard from './pages/Profile/AddCard';
+// ----------------------------------------------------------------------
 
 export default function Router() {
     return useRoutes([
@@ -93,7 +94,8 @@ export default function Router() {
                 { element: <Navigate to="/dashboard/index" replace /> },
                 { path: 'index', element: <UserDashboard /> },
                 { path: 'bills', element: <BillUser /> },
-                { path: 'messages', element: <Message /> }
+                { path: 'messages', element: <Message /> },
+                { path: 'addCard', element: < AddCard/> }
             ]
         },
         {//mesaj sayfaları

@@ -25,6 +25,17 @@ namespace ApartmentsApp.WebUI.Controllers
             _jwtService = jwtService;
         }
 
+        [HttpGet]
+        [Route("ProfileDetails")]
+        public BaseModel<AccountDetailsModel> GetMyDetails()
+        {
+            BaseModel<AccountDetailsModel> response = new();
+            var token = _jwtService.Verify(Request.Cookies["jwt"]);
+            int currentUserId = Convert.ToInt32(token.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+            response = _userService.GetMyDetails(currentUserId);
+            return response;
+        }
+
         [HttpPost]
         [Route("Login")]
         public BaseModel<UserAuthModel> Login([FromBody] UserLoginModel login)

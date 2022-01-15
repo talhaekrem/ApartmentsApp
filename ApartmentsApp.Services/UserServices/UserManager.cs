@@ -187,6 +187,25 @@ namespace ApartmentsApp.Services.UserServices
             return result;
         }
 
+        public BaseModel<AccountDetailsModel> GetMyDetails(int id)
+        {
+            var result = new BaseModel<AccountDetailsModel>() { isSuccess = false };
+            using (var _context = new ApartmentsAppContext())
+            {
+                var user = _context.Users.FirstOrDefault(u => u.Id == id);
+                if (user is not null)
+                {
+                    result.entity = _mapper.Map<AccountDetailsModel>(user);
+                    result.isSuccess = true;
+                }
+                else
+                {
+                    result.exeptionMessage = "Girdiğiniz idye ait kullanıcı bulunmamaktadır.";
+                }
+            }
+            return result;
+        }
+
         public BaseModel<UserDetailsModel> Update(UserUpdateModel updateUser)
         {
             var result = new BaseModel<UserDetailsModel>() { isSuccess = false };

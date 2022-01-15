@@ -13,11 +13,17 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Button
+    Button,
+    FormLabel,
+    FormControl,
+    FormControlLabel,
+    RadioGroup,
+    Radio
 } from '@mui/material';
 import Page from '../../components/Page';
 import Label from '../../components/Label';
 import Scrollbar from '../../components/Scrollbar';
+import { Formik, Form } from 'formik';
 
 export default function DetailBillAdmin() {
     const [result, setResult] = useState([]);
@@ -26,12 +32,17 @@ export default function DetailBillAdmin() {
     const { billId } = useParams();
     const { type } = useParams();
 
-    const payClick = () => {
-        console.log("öde tıklandı");
-    };
+    const [card, setCard] = useState([]);
+
     useEffect(() => {
         axios.get(`/api/BillUser/detail/${type}/${billId}`)
             .then((res) => setBill(res.data.entity));
+
+        axios.get("/Account/ProfileDetails")
+            .then((res) => {
+                axios.get(`/api/CreditCard/GetMyCards/${res.data.entity.id}`)
+                    .then((resp) => setCard(resp.data))
+            })
 
         switch (type) {
             case "dues":
@@ -52,6 +63,7 @@ export default function DetailBillAdmin() {
         }
     }, [type, billId]);
 
+
     return (
         <Page title="Fatura-Aidat Öde | My Apartments">
             <Container>
@@ -62,10 +74,10 @@ export default function DetailBillAdmin() {
                 </Stack>
 
                 <Stack spacing={2} mb={3}>
-                    {result.isSuccess === true &&
+                    {result === true &&
                         <Alert severity="success">Fatura başarıyla ödendi</Alert>
                     }
-                    {result.isSuccess === false && <Alert severity='error'>{result.exeptionMessage}</Alert>}
+                    {result === false && <Alert severity='error'>Fatura ödenirken bir hata oluştu</Alert>}
                 </Stack>
 
                 <Card>
@@ -94,7 +106,7 @@ export default function DetailBillAdmin() {
 
                                     <TableRow>
                                         <TableCell align="left">Tutar</TableCell>
-                                        <TableCell align="left">{bill && bill.price + "TL"} </TableCell>
+                                        <TableCell align="left">{bill && bill.price + " TL"} </TableCell>
                                     </TableRow>
 
                                     <TableRow>
@@ -114,19 +126,73 @@ export default function DetailBillAdmin() {
 
                 {bill && (!bill.isPaid && (
                     <Stack sx={{ my: 5 }}>
+
                         <Card sx={{ mb: 3 }}>
-                            kart bilgileri gelecek
+                            <Typography variant="h6" gutterBottom>
+                                Yalnızca Kredi Kartıyla Ödeme yapabilirsiniz
+                            </Typography>
                         </Card>
 
-                        <Button
-                            onClick={payClick}
-                            color="info"
-                            fullWidth
-                            size="large"
-                            variant="contained"
-                        >
-                            Öde
-                        </Button>
+                        {card !== null ? (
+
+                            <Formik
+                                enableReinitialize="true"
+                                initialValues={{
+                                    cardId: "",
+                                    total:bill.price ?? 0
+                                }}
+                                onSubmit={(datas) => {
+                                    fetch("/api/CreditCard/Pay", {
+                                        method: "POST",
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(datas)
+                                    })
+                                        .then(resp => resp.json())
+                                        .then(data => {
+                                            if (data === true) {
+                                                axios.get(`/api/BillUser/pay/${type}/${billId}`)
+                                                    .then((res) => setResult(res.data));
+                                            }
+                                        })
+                                }}
+                            >
+                                {({ values, setFieldValue }) => (
+                                    <Form>
+                                        <FormControl component="fieldset">
+                                            <FormLabel component="legend">Kart Seçiniz</FormLabel>
+                                            <RadioGroup
+                                                name="cardId"
+                                                value={values.cardId}
+                                                row
+                                                aria-label="cards"
+                                                onChange={(event) => {
+                                                    setFieldValue("cardId", event.currentTarget.value)
+                                                }}
+                                            >
+                                                {card.map((row, index) => {
+                                                    const { id, bankName } = row;
+                                                    return (
+                                                        <FormControlLabel key={index} value={id} control={<Radio />} label={bankName} />
+                                                    );
+                                                })}
+                                            </RadioGroup>
+                                        </FormControl>
+                                        <Button
+                                            type="submit"
+                                            color="info"
+                                            fullWidth
+                                            size="large"
+                                            variant="contained"
+                                        >
+                                            Öde
+                                        </Button>
+                                    </Form>
+                                )}
+                            </Formik>
+
+                        ) : (
+                            <p>Hesabınıza kayıtlı kredi kartı bulunamadı. Profilimden hesabınıza kredi kartı ekleyiniz.</p>
+                        )}
                     </Stack>
                 ))}
             </Container>

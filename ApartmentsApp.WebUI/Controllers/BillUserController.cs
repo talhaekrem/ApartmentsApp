@@ -66,5 +66,30 @@ namespace ApartmentsApp.WebUI.Controllers
             }
             return response;
         }
+
+        [HttpGet("pay/{type}/{billId}")]
+        public bool PayBill(string type, int billId)
+        {
+            bool response = false;
+            switch (type)
+            {
+                case "dues":
+                    response = _customBillService.PayBill(billId, BillType.Home);
+                    break;
+                case "electric":
+                    response = _customBillService.PayBill(billId, BillType.Electric);
+                    break;
+                case "water":
+                    response = _customBillService.PayBill(billId, BillType.Water);
+
+                    break;
+                case "gas":
+                    response = _customBillService.PayBill(billId, BillType.Gas);
+                    break;
+                default:
+                    break;
+            }
+            return response;
+        }
     }
 }

@@ -25,6 +25,7 @@ namespace ApartmentsApp.WebUI.Infrastructure
             CreateMap<UserAddModel, Users>();
             CreateMap<Users, UserDetailsModel>();
             CreateMap<UserUpdateModel, Users>();
+            CreateMap<Users, AccountDetailsModel>();
 
             //message
             CreateMap<Messages, MessageListModel>();

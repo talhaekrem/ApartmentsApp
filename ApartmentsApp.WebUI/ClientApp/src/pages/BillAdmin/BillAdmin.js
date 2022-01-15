@@ -177,7 +177,7 @@ export default function BillAdmin() {
                                                                 <Label
                                                                 style={cursorPointer}
                                                                     variant="ghost"
-                                                                    color={(isHomeBillPaid === false && 'error') || 'info'}>
+                                                                        color={(isHomeBillPaid === false && 'error') || 'success'}>
                                                                     {isHomeBillPaid ? "Ödendi" : "Ödenmedi"}
                                                                 </Label>
                                                                 </Button>
@@ -210,7 +210,7 @@ export default function BillAdmin() {
                                                                 <Label
                                                                 style={cursorPointer}
                                                                     variant="ghost"
-                                                                    color={(isElectricBillPaid === false && 'error') || 'info'}>
+                                                                    color={(isElectricBillPaid === false && 'error') || 'success'}>
                                                                     {isElectricBillPaid ? "Ödendi" : "Ödenmedi"}
                                                                     </Label>
                                                                 </Button>
@@ -246,7 +246,7 @@ export default function BillAdmin() {
                                                                     <Label
                                                                     style={cursorPointer}
                                                                     variant="ghost"
-                                                                    color={(isWaterBillPaid === false && 'error') || 'info'}>
+                                                                        color={(isWaterBillPaid === false && 'error') || 'success'}>
                                                                     {isWaterBillPaid ? "Ödendi" : "Ödenmedi"}
                                                                 </Label>
                                                                 </Button>
@@ -282,7 +282,7 @@ export default function BillAdmin() {
                                                                     <Label
                                                                     style={cursorPointer}
                                                                     variant="ghost"
-                                                                    color={(isGasBillPaid === false && 'error') || 'info'}>
+                                                                        color={(isGasBillPaid === false && 'error') || 'success'}>
                                                                     {isGasBillPaid ? "Ödendi" : "Ödenmedi"}
                                                                 </Label>
                                                                 </Button>

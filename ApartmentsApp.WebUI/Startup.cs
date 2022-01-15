@@ -19,6 +19,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Hangfire;
 using TalhaMarket.Service.MailSender;
+using ApartmentsApp.API.Services;
+using ApartmentsApp.API.Models;
+using Microsoft.Extensions.Options;
 
 namespace ApartmentsApp.WebUI
 {
@@ -84,6 +87,17 @@ namespace ApartmentsApp.WebUI
             services.AddScoped<IMessageService, MessageManager>();
             services.AddScoped<IUserService, UserManager>();
             services.AddScoped<JwtService>();
+
+            //Api katmanındaki mongodb bağlantıları için gerekli işlemler
+            //mongodb connecttion stringinin eklenmesi
+            services.Configure<CreditCardDatabaseSettings>(
+                Configuration.GetSection(nameof(CreditCardDatabaseSettings)));
+
+            services.AddSingleton<ICreditCardDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<CreditCardDatabaseSettings>>().Value);
+
+            services.AddSingleton<CreditCardService>();
+
 
             services.AddScoped<IMailService, MailManager>();
             //hangfire kurulumu için gerekli veritabanı bağlantılarını yapıyorum. ayrı bir databasede de tutulabilir.

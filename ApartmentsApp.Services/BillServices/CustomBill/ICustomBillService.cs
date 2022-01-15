@@ -17,5 +17,7 @@ namespace ApartmentsApp.Services.BillServices.CustomBill
         BaseModel<bool> AddEveryone(BillsAddMultipleModel model);
         BaseModel<BillsDetailsModel> UpdateBill(BillsUpdateModel updateBill, BillType type);
         BaseModel<bool> DeleteBill(int id, BillType type);
+
+        bool PayBill(int id, BillType type);
     }
 }
