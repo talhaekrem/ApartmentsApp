@@ -87,9 +87,7 @@ export default function LoginForm() {
         <FormikProvider value={formik}>
             <Form onSubmit={handleSubmit}>
                 <Stack spacing={2} mb={3}>
-                    {result.isSuccess === false && <Alert severity='error'>{result.exeptionMessage}</Alert>
-
-                    }
+                    {result.isSuccess === false && <Alert severity='error'>{result.exeptionMessage}</Alert>}
                 </Stack>
                 <Stack spacing={3} sx={{ mb: 4 }}>
                     <TextField

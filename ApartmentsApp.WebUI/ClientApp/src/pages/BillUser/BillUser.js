@@ -114,7 +114,7 @@ export default function BillUser() {
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                     <Typography variant="h3" gutterBottom>
-                        Fatura ve Aidat
+                        Aidat ve Ortak Kullanım Faturalarım
                     </Typography>
                 </Stack>
 
